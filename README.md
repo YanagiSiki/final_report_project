@@ -1,3 +1,18 @@
-# Project Title
+# 「統計基礎及R語言應用」期末報告專案
 
-This is a placeholder for the project description. Please update it with relevant information about the project.
+本專案為「統計基礎及R語言應用」課程的期末報告。主要目標是利用提供的數據集進行統計分析，探討不同變數之間的關聯性。
+
+## 目錄結構
+
+- `data/`: 存放原始數據集 (CSV 檔案)。
+- `output_chapters/`: 存放最終報告的各個章節輸出檔案。
+- `prompt_master_outline.md`: 定義報告大綱及各章節分析方向的提示文件。
+- `README.md`: 專案說明文件（本文件）。
+
+## 數據集
+
+本專案使用以下數據集：
+
+- `salary_data_109_113.csv`: 109年至113年薪資相關數據。
+- `tcte_birth_cohort_statistics_109_113.csv`: 109年至113年出生世代統計數據。
+- `tcte_registration_109_114.csv`: 109年至114年登記相關數據。
