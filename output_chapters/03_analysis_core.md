@@ -10,9 +10,9 @@
 
   - 對資料進行初步的描述與視覺化。
 
-- **3.2 變異數分析：不同群體間的薪資比較 (ANOVA: Salary Comparison Across Groups)**
+- **3.2 行業薪資比較 (Industry Salary Comparison)**
 
-  - 檢定不同群體的平均薪資是否存在顯著差異。
+  - 透過視覺化圖表，比較不同行業的薪資水平。
 
 - **3.3 相關性與迴歸分析：探討變數間的關係 (Correlation and Regression: Exploring Relationships)**
 
