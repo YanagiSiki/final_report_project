@@ -143,16 +143,17 @@ salary_heatmap_plot <- ggplot(salary_growth_data, aes(x = as.factor(年度), y =
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ggsave(
-  filename = file.path(image_output_path, "A_salary_growth_heatmap.svg"),
+  filename = file.path(image_output_path, "3_1_salary_growth_heatmap.svg"),
   plot = salary_heatmap_plot,
   width = 10, height = 8
 )
-cat("已儲存圖表: A_salary_growth_heatmap.svg\n")
+cat("已儲存圖表: 3_1_salary_growth_heatmap.svg\n")
 
 
 # --- PLOT 5: Registration Total Change Bar Chart ---
 reg_change_data <- registration_long %>%
   filter(學年度 %in% c(109, 114)) %>%
+  select(-學年度_str) %>% # 移除此欄位，避免 pivot_wider 行為錯誤
   pivot_wider(names_from = 學年度, values_from = 報名人數, names_prefix = "y") %>%
   mutate(
     總人數變化 = y114 - y109
@@ -161,7 +162,7 @@ reg_change_data <- registration_long %>%
 
 reg_change_plot <- ggplot(reg_change_data, aes(x = 總人數變化, y = reorder(群類名稱, 總人數變化))) +
   geom_col(aes(fill = 總人數變化 > 0)) +
-  geom_text(aes(label = scales::comma(總人數變化)), hjust = ifelse(reg_change_data$總人數變化 > 0, -0.1, 1.1), size = 3.5) +
+  geom_text(aes(label = scales::comma(總人數變化), hjust = ifelse(總人數變化 > 0, -0.1, 1.1)), size = 3.5) +
   scale_fill_manual(values = c("TRUE" = "#4CAF50", "FALSE" = "#F44336"), guide = "none") +
   labs(
     title = "各科系群類 109-114 學年度總人數變化",
@@ -176,11 +177,11 @@ reg_change_plot <- ggplot(reg_change_data, aes(x = 總人數變化, y = reorder(
   )
 
 ggsave(
-  filename = file.path(image_output_path, "B_reg_total_change_bar.svg"),
+  filename = file.path(image_output_path, "3_1_reg_total_change_bar.svg"),
   plot = reg_change_plot,
   width = 10, height = 8
 )
-cat("已儲存圖表: B_reg_total_change_bar.svg\n")
+cat("已儲存圖表: 3_1_reg_total_change_bar.svg\n")
 
 
 # --- PLOT 6: Registration Share Stacked Area Chart ---
@@ -212,11 +213,11 @@ reg_share_plot <- ggplot(reg_share_data, aes(x = 學年度, y = 報名佔比, fi
   )
 
 ggsave(
-  filename = file.path(image_output_path, "C_reg_share_area.svg"),
+  filename = file.path(image_output_path, "3_1_reg_share_area.svg"),
   plot = reg_share_plot,
   width = 10, height = 7
 )
-cat("已儲存圖表: C_reg_share_area.svg\n")
+cat("已儲存圖表: 3_1_reg_share_area.svg\n")
 
 
 # --- PLOT 7: Correlation Matrix ---
@@ -291,10 +292,10 @@ correlation_matrix_plot <- ggpairs(
   )
 
 ggsave(
-  filename = file.path(image_output_path, "D_correlation_matrix.svg"),
+  filename = file.path(image_output_path, "3_1_correlation_matrix.svg"),
   plot = correlation_matrix_plot,
   width = 12, height = 12
 )
-cat("已儲存圖表: D_correlation_matrix.svg\n")
+cat("已儲存圖表: 3_1_correlation_matrix.svg\n")
 
 cat("\n--- 所有 3.1.2 章節的圖表已全數更新完畢。 ---\n")
