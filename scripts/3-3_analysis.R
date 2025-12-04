@@ -1,9 +1,6 @@
 # scripts/3-3_analysis.R
 #
-# 更新 v7 (重新設計): 比較「年度增長率」。
-# 1. X 軸: 薪資年增率。
-# 2. Y 軸: 報名人數年增率。
-# 3. 產生的 CSV 和圖表將反映每個科系在每一年的動態變化。
+# 更新 v8: 修改 print 指令，使其能顯示所有資料列。
 #
 # -----------------------------------------------------------------------------
 
@@ -15,13 +12,17 @@ library(ggplot2)
 library(svglite)
 library(stringr)
 
-cat("--- 步驟 1：套件載入成功 ---\n\n")
+cat("--- 步驟 1：套件載入成功 ---
+
+")
 
 # 2. 載入原始資料
 salary_data <- read_csv("data/salary_data_109_113.csv", show_col_types = FALSE)
 registration_data <- read_csv("data/tcte_registration_109_114.csv", show_col_types = FALSE)
 
-cat("--- 步驟 2：原始資料載入成功 ---\n\n")
+cat("--- 步驟 2：原始資料載入成功 ---
+
+")
 
 
 # 3. 準備年度資料
@@ -42,7 +43,9 @@ registration_annual <- registration_data %>%
   filter(!is.na(報名人數), 群類代號 != "All", between(年度, 109, 113)) %>%
   select(群類名稱, 年度, 報名人數)
 
-cat("--- 步驟 3：已準備好歷年薪資與報名人數資料 ---\n\n")
+cat("--- 步驟 3：已準備好歷年薪資與報名人數資料 ---
+
+")
 
 
 # 4. 建立對應表並合併資料
@@ -61,17 +64,17 @@ mapping_table_final <- tribble(
 )
 
 # 進行合併
-# 使用 left_join 確保所有學生資料都被保留，然後再與薪資資料合併
 merged_annual_data <- left_join(registration_annual, mapping_table_final, by = "群類名稱") %>%
   inner_join(industry_salary_annual, by = c("行業別", "年度"))
 
-cat("--- 步驟 4：已合併年度資料 ---\n\n")
+cat("--- 步驟 4：已合併年度資料 ---
+
+")
 
 
 # 5. 計算年增率並儲存 CSV
 # --------------------------------
 analysis_data_final <- merged_annual_data %>%
-  # 必須對每個獨立的群類進行分組計算
   group_by(行業別, 群類名稱) %>%
   arrange(年度, .by_group = TRUE) %>%
   mutate(
@@ -79,10 +82,12 @@ analysis_data_final <- merged_annual_data %>%
     報名人數年增率 = (報名人數 - lag(報名人數)) / lag(報名人數)
   ) %>%
   ungroup() %>%
-  filter(!is.na(薪資年增率) & !is.na(報名人數年增率)) # 移除無法計算增長率的資料 (即第一年)
+  filter(!is.na(薪資年增率) & !is.na(報名人數年增率))
 
-cat("--- 步驟 5a：已計算年增率 ---\n")
-print(analysis_data_final)
+cat("--- 步驟 5a：已計算年增率 ---
+")
+# 【關鍵修正】使用 print(n = Inf) 來顯示所有資料列
+print(analysis_data_final, n = Inf)
 cat("\n")
 
 # 儲存修正後的最終分析資料
