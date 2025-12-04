@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='864.00pt' height='648.00pt' viewBox='0 0 864.00 648.00'>
+<g class='svglite'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+    .svglite g.glyphgroup path {
+      fill: inherit;
+      stroke: none;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw4NjQuMDB8MC4wMHw2NDguMDA='>
+    <rect x='0.00' y='0.00' width='864.00' height='648.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw4NjQuMDB8MC4wMHw2NDguMDA=)'>
+<rect x='-0.000000000000064' y='0.00' width='864.00' height='648.00' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+</g>
+<defs>
+  <clipPath id='cpNDMuODh8ODU4LjUyfDQwLjUzfDU2My42OA=='>
+    <rect x='43.88' y='40.53' width='814.64' height='523.15' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNDMuODh8ODU4LjUyfDQwLjUzfDU2My42OA==)'>
+<polyline points='43.88,472.88 858.52,472.88 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='43.88,324.24 858.52,324.24 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='43.88,175.60 858.52,175.60 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='185.50,563.68 185.50,40.53 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='396.79,563.68 396.79,40.53 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='608.08,563.68 608.08,40.53 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='819.38,563.68 819.38,40.53 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='43.88,547.20 858.52,547.20 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='43.88,398.56 858.52,398.56 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='43.88,249.92 858.52,249.92 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='43.88,101.28 858.52,101.28 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='79.85,563.68 79.85,40.53 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='291.14,563.68 291.14,40.53 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='502.44,563.68 502.44,40.53 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='713.73,563.68 713.73,40.53 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<circle cx='80.91' cy='539.90' r='1.42' style='stroke-width: 0.71; stroke: #E76BF3; stroke-opacity: 0.80; fill: #E76BF3; fill-opacity: 0.80;' />
+<circle cx='821.49' cy='169.07' r='6.76' style='stroke-width: 0.71; stroke: #A3A500; stroke-opacity: 0.80; fill: #A3A500; fill-opacity: 0.80;' />
+<circle cx='257.34' cy='169.07' r='4.03' style='stroke-width: 0.71; stroke: #A3A500; stroke-opacity: 0.80; fill: #A3A500; fill-opacity: 0.80;' />
+<circle cx='293.26' cy='170.73' r='4.28' style='stroke-width: 0.71; stroke: #00B0F6; stroke-opacity: 0.80; fill: #00B0F6; fill-opacity: 0.80;' />
+<circle cx='271.07' cy='64.31' r='4.12' style='stroke-width: 0.71; stroke: #F8766D; stroke-opacity: 0.80; fill: #F8766D; fill-opacity: 0.80;' />
+<circle cx='441.16' cy='468.10' r='5.14' style='stroke-width: 0.71; stroke: #00BF7D; stroke-opacity: 0.80; fill: #00BF7D; fill-opacity: 0.80;' />
+<polyline points='80.91,325.15 90.28,323.09 99.66,321.03 109.03,318.96 118.40,316.90 127.78,314.84 137.15,312.77 146.53,310.71 155.90,308.64 165.28,306.58 174.65,304.52 184.03,302.45 193.40,300.39 202.77,298.33 212.15,296.26 221.52,294.20 230.90,292.14 240.27,290.07 249.65,288.01 259.02,285.95 268.40,283.88 277.77,281.82 287.15,279.76 296.52,277.69 305.89,275.63 315.27,273.57 324.64,271.50 334.02,269.44 343.39,267.38 352.77,265.31 362.14,263.25 371.52,261.19 380.89,259.12 390.26,257.06 399.64,255.00 409.01,252.93 418.39,250.87 427.76,248.81 437.14,246.74 446.51,244.68 455.89,242.62 465.26,240.55 474.64,238.49 484.01,236.43 493.38,234.36 502.76,232.30 512.13,230.24 521.51,228.17 530.88,226.11 540.26,224.05 549.63,221.98 559.01,219.92 568.38,217.85 577.75,215.79 587.13,213.73 596.50,211.66 605.88,209.60 615.25,207.54 624.63,205.47 634.00,203.41 643.38,201.35 652.75,199.28 662.12,197.22 671.50,195.16 680.87,193.09 690.25,191.03 699.62,188.97 709.00,186.90 718.37,184.84 727.75,182.78 737.12,180.71 746.50,178.65 755.87,176.59 765.24,174.52 774.62,172.46 783.99,170.40 793.37,168.33 802.74,166.27 812.12,164.21 821.49,162.14 ' style='stroke-width: 2.13; stroke: #B22222; stroke-dasharray: 11.38,11.38; stroke-linecap: butt;' />
+<line x1='360.87' y1='563.68' x2='360.87' y2='40.53' style='stroke-width: 1.07; stroke: #BEBEBE; stroke-dasharray: 1.42,4.27; stroke-linecap: butt;' />
+<line x1='43.88' y1='263.53' x2='858.52' y2='263.53' style='stroke-width: 1.07; stroke: #BEBEBE; stroke-dasharray: 1.42,4.27; stroke-linecap: butt;' />
+<text x='80.91' y='530.73' text-anchor='middle' style='font-size: 8.54px; font-family: "Arial";' textLength='25.59px' lengthAdjust='spacingAndGlyphs'>餐旅群</text>
+<text x='821.49' y='159.90' text-anchor='middle' style='font-size: 8.54px; font-family: "Arial";' textLength='51.19px' lengthAdjust='spacingAndGlyphs'>商業與管理群</text>
+<text x='257.34' y='159.90' text-anchor='middle' style='font-size: 8.54px; font-family: "Arial";' textLength='51.19px' lengthAdjust='spacingAndGlyphs'>商業與管理群</text>
+<text x='271.07' y='55.14' text-anchor='middle' style='font-size: 8.54px; font-family: "Arial";' textLength='51.19px' lengthAdjust='spacingAndGlyphs'>土木與建築群</text>
+<text x='441.16' y='458.93' text-anchor='middle' style='font-size: 8.54px; font-family: "Arial";' textLength='51.19px' lengthAdjust='spacingAndGlyphs'>衛生與護理類</text>
+</g>
+<g clip-path='url(#cpMC4wMHw4NjQuMDB8MC4wMHw2NDguMDA=)'>
+<text x='38.95' y='550.35' text-anchor='end' style='font-size: 8.80px;fill: #4D4D4D; font-family: "Arial";' textLength='20.53px' lengthAdjust='spacingAndGlyphs'>-50%</text>
+<text x='38.95' y='401.71' text-anchor='end' style='font-size: 8.80px;fill: #4D4D4D; font-family: "Arial";' textLength='20.53px' lengthAdjust='spacingAndGlyphs'>-40%</text>
+<text x='38.95' y='253.07' text-anchor='end' style='font-size: 8.80px;fill: #4D4D4D; font-family: "Arial";' textLength='20.53px' lengthAdjust='spacingAndGlyphs'>-30%</text>
+<text x='38.95' y='104.43' text-anchor='end' style='font-size: 8.80px;fill: #4D4D4D; font-family: "Arial";' textLength='20.53px' lengthAdjust='spacingAndGlyphs'>-20%</text>
+<text x='79.85' y='574.91' text-anchor='middle' style='font-size: 8.80px;fill: #4D4D4D; font-family: "Arial";' textLength='26.89px' lengthAdjust='spacingAndGlyphs'>40,000</text>
+<text x='291.14' y='574.91' text-anchor='middle' style='font-size: 8.80px;fill: #4D4D4D; font-family: "Arial";' textLength='26.89px' lengthAdjust='spacingAndGlyphs'>60,000</text>
+<text x='502.44' y='574.91' text-anchor='middle' style='font-size: 8.80px;fill: #4D4D4D; font-family: "Arial";' textLength='26.89px' lengthAdjust='spacingAndGlyphs'>80,000</text>
+<text x='713.73' y='574.91' text-anchor='middle' style='font-size: 8.80px;fill: #4D4D4D; font-family: "Arial";' textLength='31.78px' lengthAdjust='spacingAndGlyphs'>100,000</text>
+<text x='451.20' y='587.37' text-anchor='middle' style='font-size: 11.00px; font-family: "Arial";' textLength='126.94px' lengthAdjust='spacingAndGlyphs'>113年行業平均總薪資 (元)</text>
+<text transform='translate(13.36,302.10) rotate(-90)' text-anchor='middle' style='font-size: 11.00px; font-family: "Arial";' textLength='149.59px' lengthAdjust='spacingAndGlyphs'>109-114學年度報名人數變動率</text>
+<text x='146.25' y='618.71' style='font-size: 11.00px; font-family: "Arial";' textLength='87.38px' lengthAdjust='spacingAndGlyphs'>行業薪資水平 (萬)</text>
+<circle cx='247.75' cy='614.77' r='4.26' style='stroke-width: 0.71; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<circle cx='280.88' cy='614.77' r='5.45' style='stroke-width: 0.71; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<circle cx='314.01' cy='614.77' r='6.35' style='stroke-width: 0.71; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<text x='261.87' y='617.92' style='font-size: 8.80px; font-family: "Arial";' textLength='4.89px' lengthAdjust='spacingAndGlyphs'>6</text>
+<text x='295.00' y='617.92' style='font-size: 8.80px; font-family: "Arial";' textLength='4.89px' lengthAdjust='spacingAndGlyphs'>8</text>
+<text x='328.13' y='617.92' style='font-size: 8.80px; font-family: "Arial";' textLength='9.78px' lengthAdjust='spacingAndGlyphs'>10</text>
+<text x='359.83' y='618.71' style='font-size: 11.00px; font-family: "Arial";' textLength='44.00px' lengthAdjust='spacingAndGlyphs'>科系群類</text>
+<circle cx='417.94' cy='614.77' r='1.95' style='stroke-width: 0.71; stroke: #F8766D; stroke-opacity: 0.80; fill: #F8766D; fill-opacity: 0.80;' />
+<circle cx='498.96' cy='614.77' r='1.95' style='stroke-width: 0.71; stroke: #A3A500; stroke-opacity: 0.80; fill: #A3A500; fill-opacity: 0.80;' />
+<circle cx='579.98' cy='614.77' r='1.95' style='stroke-width: 0.71; stroke: #00BF7D; stroke-opacity: 0.80; fill: #00BF7D; fill-opacity: 0.80;' />
+<circle cx='661.01' cy='614.77' r='1.95' style='stroke-width: 0.71; stroke: #00B0F6; stroke-opacity: 0.80; fill: #00B0F6; fill-opacity: 0.80;' />
+<circle cx='715.63' cy='614.77' r='1.95' style='stroke-width: 0.71; stroke: #E76BF3; stroke-opacity: 0.80; fill: #E76BF3; fill-opacity: 0.80;' />
+<text x='432.06' y='617.92' style='font-size: 8.80px; font-family: "Arial";' textLength='52.78px' lengthAdjust='spacingAndGlyphs'>土木與建築群</text>
+<text x='513.08' y='617.92' style='font-size: 8.80px; font-family: "Arial";' textLength='52.78px' lengthAdjust='spacingAndGlyphs'>商業與管理群</text>
+<text x='594.10' y='617.92' style='font-size: 8.80px; font-family: "Arial";' textLength='52.78px' lengthAdjust='spacingAndGlyphs'>衛生與護理類</text>
+<text x='675.12' y='617.92' style='font-size: 8.80px; font-family: "Arial";' textLength='26.39px' lengthAdjust='spacingAndGlyphs'>機械群</text>
+<text x='729.75' y='617.92' style='font-size: 8.80px; font-family: "Arial";' textLength='26.39px' lengthAdjust='spacingAndGlyphs'>餐旅群</text>
+<text x='451.20' y='32.95' text-anchor='middle' style='font-size: 10.00px; font-family: "Arial";' textLength='270.00px' lengthAdjust='spacingAndGlyphs'>每個點代表一個科系群類，點的大小反映其對應行業薪資水平</text>
+<text x='451.20' y='16.93' text-anchor='middle' style='font-size: 16.00px; font-weight: bold; font-family: "Arial";' textLength='383.17px' lengthAdjust='spacingAndGlyphs'>行業平均薪資 vs. 科系群類報名人數變動率決策矩陣圖</text>
+<text x='858.52' y='640.67' text-anchor='end' style='font-size: 8.80px; font-family: "Arial";' textLength='202.33px' lengthAdjust='spacingAndGlyphs'>資料來源：行政院主計總處、技專校院入學測驗中心</text>
+</g>
+</g>
+</svg>
