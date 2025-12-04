@@ -24,15 +24,7 @@ library(svglite)
 file_path <- "data/salary_data_109_113.csv"
 salary_data <- read_csv(file_path, show_col_types = FALSE)
 
-# ---
-# >>> Gemini CLI 偵錯區塊 (Debug Block) <<<
-# 目的：印出欄位名稱後停止，以確認 CSV 檔案的實際欄位。
-# 請執行此腳本並將輸出結果貼回給我。
-cat("--- 請將以下「資料欄位名稱」複製給我 ---\n")
-print(colnames(salary_data))
-cat("-----------------------------------------\n")
-stop(">>> 腳本已暫停。請複製上面的欄位名稱列表並回傳給我。<<<")
-# ---
+
 
 # 3. 資料前處理
 # 我們將只專注於 113 年的資料來進行橫向比較
