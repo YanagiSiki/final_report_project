@@ -22,7 +22,7 @@ cat("--- 步驟 1：套件載入成功 (2_descriptive_analysis.R) ---
 # 2. 資料與路徑設定
 # ---------------------------
 data_path <- "data/"
-image_output_path <- "output_chapters/images/"
+image_output_path <- "output/figures/"
 
 # 讀取所需資料
 birth_cohort_data <- read_csv(file.path(data_path, "tcte_birth_cohort_statistics_109_113.csv"), show_col_types = FALSE)
@@ -158,9 +158,9 @@ cat("--- 2_3_salary_growth_heatmap.svg 已儲存 ---
 ")
 
 
-# 圖表 2.4: 出生人口與統測總報名人數趨勢
+# 圖表 3.1: 出生人口與統測總報名人數趨勢 (對應 3-1 節分析)
 # --------------------------------------------------------------
-cat("--- 步驟 3d：生成 2_4_birth_reg_trend.svg ---
+cat("--- 步驟 3d：生成 3_1_birth_reg_trend.svg ---
 ")
 birth_reg_plot <- ggplot(birth_cohort_data, aes(x = 統測學年度)) +
   geom_line(aes(y = 該年出生人數, color = "該年出生人數"), linewidth = 1.2) +
@@ -178,11 +178,11 @@ birth_reg_plot <- ggplot(birth_cohort_data, aes(x = 統測學年度)) +
   theme_minimal(base_family = "sans")
 
 ggsave(
-  filename = file.path(image_output_path, "2_4_birth_reg_trend.svg"), # 新檔名
+  filename = file.path(image_output_path, "3_1_birth_reg_trend.svg"), # 新檔名
   plot = birth_reg_plot,
   width = 8, height = 5
 )
-cat("--- 2_4_birth_reg_trend.svg 已儲存 ---
+cat("--- 3_1_birth_reg_trend.svg 已儲存 ---
 
 ")
 

@@ -132,7 +132,7 @@ if (nrow(analysis_data_final) > 0) {
       legend.position = "right"
     )
 
-  output_path_svg <- "output_chapters/images/3_3_decision_matrix.svg"
+  output_path_svg <- "output/figures/3_3_decision_matrix.svg"
   ggsave(filename = output_path_svg, plot = scatter_plot, width = 12, height = 9)
   cat(paste("--- 步驟 6：決策矩陣圖已儲存至", output_path_svg, "---
 "))
