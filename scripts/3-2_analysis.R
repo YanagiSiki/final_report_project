@@ -27,6 +27,44 @@ salary_for_analysis <- salary_data %>%
 
 cat("--- 步驟 3：已準備好用於 ANOVA 分析的資料 ---\n\n")
 
+# 3.1 繪製各行業平均總薪資盒鬚圖 (Boxplot) - 新增功能
+# -----------------------------------------------------------------------------
+library(ggplot2)
+
+# 計算每個行業 5 年來的平均薪資，用於排序
+industry_order <- salary_data %>%
+  filter(行業別 != "工業及服務業總計", !is.na(總薪資)) %>%
+  group_by(行業別) %>%
+  summarise(mean_salary = mean(總薪資, na.rm = TRUE)) %>%
+  arrange(mean_salary) %>%
+  pull(行業別)
+
+# 轉換為 factor 以控制繪圖順序
+salary_for_plot <- salary_data %>%
+  filter(行業別 != "工業及服務業總計", !is.na(總薪資))
+salary_for_plot$行業別 <- factor(salary_for_plot$行業別, levels = industry_order)
+
+p_boxplot <- ggplot(salary_for_plot, aes(x = 行業別, y = 總薪資)) +
+  geom_boxplot(fill = "#69b3a2", color = "#2c3e50", alpha = 0.7, outlier.shape = 16, outlier.size = 2) +
+  coord_flip() + # 轉置座標軸，讓長行業名稱好讀
+  labs(
+    title = "圖二、各行業平均總薪資盒鬚圖 (109-113年)",
+    subtitle = "呈現各行業 5 年間的薪資分佈範圍與中位數差異",
+    x = "行業別",
+    y = "平均總薪資 (元)",
+    caption = "資料來源：行政院主計總處"
+  ) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "Microsoft JhengHei"),
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.text.y = element_text(size = 10)
+  )
+
+# 儲存圖表
+ggsave("output/figures/3_2_salary_boxplot.svg", plot = p_boxplot, width = 10, height = 8)
+cat("已儲存: output/figures/3_2_salary_boxplot.svg\n")
+
 
 # 4. 執行 One-way ANOVA 分析
 # ------------------------------------
