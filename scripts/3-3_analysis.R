@@ -16,9 +16,21 @@ cat("--- 步驟 1：套件載入成功 ---
 
 ")
 
+
 # 2. 載入原始資料
 salary_data <- read_csv("data/salary_data_109_113.csv", show_col_types = FALSE)
 registration_data <- read_csv("data/tcte_registration_109_114.csv", show_col_types = FALSE)
+birth_data <- read_csv("data/tcte_birth_cohort_statistics_109_113.csv", show_col_types = FALSE)
+# 2a. 計算出生人口年增率
+birth_growth <- birth_data %>%
+  select(統測學年度, 該年出生人數) %>%
+  arrange(統測學年度) %>%
+  mutate(
+    出生人口年增率 = (該年出生人數 - lag(該年出生人數)) / lag(該年出生人數)
+  ) %>%
+  rename(年度 = 統測學年度) %>%
+  select(年度, 出生人口年增率)
+
 
 cat("--- 步驟 2：原始資料載入成功 ---
 
@@ -72,7 +84,8 @@ cat("--- 步驟 4：已合併年度資料 ---
 ")
 
 
-# 5. 計算年增率並儲存 CSV
+
+# 5. 計算年增率並合併出生人口年增率，儲存 CSV
 # --------------------------------
 analysis_data_final <- merged_annual_data %>%
   group_by(行業別, 群類名稱) %>%
@@ -82,7 +95,8 @@ analysis_data_final <- merged_annual_data %>%
     報名人數年增率 = (報名人數 - lag(報名人數)) / lag(報名人數)
   ) %>%
   ungroup() %>%
-  filter(!is.na(薪資年增率) & !is.na(報名人數年增率))
+  filter(!is.na(薪資年增率) & !is.na(報名人數年增率)) %>%
+  left_join(birth_growth, by = "年度")
 
 cat("--- 步驟 5a：已計算年增率 ---
 ")
@@ -116,11 +130,14 @@ if (nrow(analysis_data_final) > 0) {
     geom_text(aes(label = str_wrap(群類名稱, 10)),
       vjust = -1.5, hjust = 0.5, size = 3, check_overlap = TRUE, color = "black"
     ) +
+    geom_text(aes(label = paste0("出生年增率:", scales::percent(出生人口年增率, accuracy = 0.1))),
+      vjust = 1.5, hjust = 0.5, size = 2.8, check_overlap = TRUE, color = "#0072B2"
+    ) +
     scale_x_continuous(labels = scales::percent) +
     scale_y_continuous(labels = scales::percent) +
     labs(
       title = "行業薪資年增率 vs. 科系報名人數年增率 (110-113年)",
-      subtitle = "每個點代表一個科系群類在某一年度的表現",
+      subtitle = "每個點代表一個科系群類在某一年度的表現，藍字標註為出生人口年增率",
       x = "行業薪資年增率",
       y = "科系報名人數年增率",
       color = "科系群類",
