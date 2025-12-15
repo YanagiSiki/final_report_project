@@ -1,13 +1,14 @@
 # scripts/3-2_analysis.R
 #
 # 目標：執行 3.2 節所需的單因子變異數分析 (One-way ANOVA)。
-# (此腳本不再產生圖表，圖表功能已移至 2_descriptive_analysis.R)
+# 重點：強調「金融保險業」與「住宿及餐飲業」的顯著差異。
 #
 # -----------------------------------------------------------------------------
 
 # 1. 載入套件
 library(readr)
 library(dplyr)
+library(ggplot2)
 
 cat("--- 步驟 1：套件載入成功 (3-2_analysis.R) ---\n\n")
 
@@ -27,9 +28,8 @@ salary_for_analysis <- salary_data %>%
 
 cat("--- 步驟 3：已準備好用於 ANOVA 分析的資料 ---\n\n")
 
-# 3.1 繪製各行業平均總薪資盒鬚圖 (Boxplot) - 新增功能
+# 3.1 繪製各行業平均總薪資盒鬚圖 (Boxplot) - 強調金融 vs 餐飲
 # -----------------------------------------------------------------------------
-library(ggplot2)
 
 # 計算每個行業 5 年來的平均薪資，用於排序
 industry_order <- salary_data %>%
@@ -44,26 +44,36 @@ salary_for_plot <- salary_data %>%
   filter(行業別 != "工業及服務業總計", !is.na(總薪資))
 salary_for_plot$行業別 <- factor(salary_for_plot$行業別, levels = industry_order)
 
-p_boxplot <- ggplot(salary_for_plot, aes(x = 行業別, y = 總薪資)) +
-  geom_boxplot(fill = "#69b3a2", color = "#2c3e50", alpha = 0.7, outlier.shape = 16, outlier.size = 2) +
+# 設定顏色：預設灰色，金融與餐飲特別標色
+salary_for_plot <- salary_for_plot %>%
+  mutate(highlight = case_when(
+    行業別 == "金融及保險業" ~ "High",
+    行業別 == "住宿及餐飲業" ~ "Low",
+    TRUE ~ "Normal"
+  ))
+
+p_boxplot <- ggplot(salary_for_plot, aes(x = 行業別, y = 總薪資, fill = highlight)) +
+  geom_boxplot(alpha = 0.8, outlier.shape = NA) + # 隱藏 outlier，改用 jitter point 顯示
+  geom_point(position = position_jitter(width = 0.15, seed = 123), size = 1.5, alpha = 0.6) + # 加入散佈點
+  scale_fill_manual(values = c("High" = "#E74C3C", "Low" = "#3498DB", "Normal" = "#BDC3C7")) +
   coord_flip() + # 轉置座標軸，讓長行業名稱好讀
   labs(
-    title = "圖二、各行業平均總薪資盒鬚圖 (109-113年)",
-    subtitle = "呈現各行業 5 年間的薪資分佈範圍與中位數差異",
+    title = "產業薪資M型化：金融業 vs 餐飲業",
+    subtitle = "各行業 109-113 年平均總薪資分佈 (ANOVA 檢定差異顯著)",
     x = "行業別",
     y = "平均總薪資 (元)",
     caption = "資料來源：行政院主計總處"
   ) +
-  theme_minimal() +
+  theme_minimal(base_family = "Microsoft JhengHei") +
   theme(
-    text = element_text(family = "Microsoft JhengHei"),
     plot.title = element_text(size = 16, face = "bold"),
-    axis.text.y = element_text(size = 10)
+    axis.text.y = element_text(size = 10),
+    legend.position = "none" # 隱藏圖例
   )
 
 # 儲存圖表
-ggsave("output/figures/3_2_salary_boxplot.svg", plot = p_boxplot, width = 10, height = 8)
-cat("已儲存: output/figures/3_2_salary_boxplot.svg\n")
+ggsave("output/figures/3_2_salary_boxplot.png", plot = p_boxplot, width = 10, height = 8, dpi = 300)
+cat("已儲存: output/figures/3_2_salary_boxplot.png\n")
 
 
 # 4. 執行 One-way ANOVA 分析

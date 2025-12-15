@@ -1,6 +1,7 @@
 # scripts/3-3_analysis.R
 #
-# 更新 v8: 修改 print 指令，使其能顯示所有資料列。
+# 目標：執行 3.3 節分析 - 報名人數與薪資之關聯 (The Demographic Mask)
+# 驗證「產業平均薪資」與「統測報名人數」的關係，並揭示少子化的遮蔽效應。
 #
 # -----------------------------------------------------------------------------
 
@@ -9,32 +10,16 @@ library(readr)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-library(svglite)
-library(stringr)
+library(scales)
 
-cat("--- 步驟 1：套件載入成功 ---
-
-")
+cat("--- 步驟 1：套件載入成功 (3-3_analysis.R) ---\n\n")
 
 
 # 2. 載入原始資料
 salary_data <- read_csv("data/salary_data_109_113.csv", show_col_types = FALSE)
 registration_data <- read_csv("data/tcte_registration_109_114.csv", show_col_types = FALSE)
-birth_data <- read_csv("data/tcte_birth_cohort_statistics_109_113.csv", show_col_types = FALSE)
-# 2a. 計算出生人口年增率
-birth_growth <- birth_data %>%
-  select(統測學年度, 該年出生人數) %>%
-  arrange(統測學年度) %>%
-  mutate(
-    出生人口年增率 = (該年出生人數 - lag(該年出生人數)) / lag(該年出生人數)
-  ) %>%
-  rename(年度 = 統測學年度) %>%
-  select(年度, 出生人口年增率)
 
-
-cat("--- 步驟 2：原始資料載入成功 ---
-
-")
+cat("--- 步驟 2：原始資料載入成功 ---\n\n")
 
 
 # 3. 準備年度資料
@@ -55,9 +40,7 @@ registration_annual <- registration_data %>%
   filter(!is.na(報名人數), 群類代號 != "All", between(年度, 109, 113)) %>%
   select(群類名稱, 年度, 報名人數)
 
-cat("--- 步驟 3：已準備好歷年薪資與報名人數資料 ---
-
-")
+cat("--- 步驟 3：已準備好歷年薪資與報名人數資料 ---\n\n")
 
 
 # 4. 建立對應表並合併資料
@@ -72,98 +55,72 @@ mapping_table_final <- tribble(
   "營建工程業", "土木與建築群",
   "醫療保健及社會工作服務業", "衛生與護理類",
   "藝術、娛樂及休閒服務業", "藝術群影視類",
-  "製造業", "化工群"
+  "製造業", "化工群",
 )
 
 # 進行合併
-merged_annual_data <- left_join(registration_annual, mapping_table_final, by = "群類名稱") %>%
-  inner_join(industry_salary_annual, by = c("行業別", "年度"))
+merged_data <- left_join(registration_annual, mapping_table_final, by = "群類名稱") %>%
+  inner_join(industry_salary_annual, by = c("行業別", "年度")) %>%
+  filter(!is.na(總薪資)) # 移除沒有對應到薪資的科系
 
-cat("--- 步驟 4：已合併年度資料 ---
-
-")
-
+cat("--- 步驟 4：已合併年度資料 ---\n\n")
 
 
-# 5. 計算年增率並合併出生人口年增率，儲存 CSV
-# --------------------------------
-analysis_data_final <- merged_annual_data %>%
-  group_by(行業別, 群類名稱) %>%
-  arrange(年度, .by_group = TRUE) %>%
+# 5. 統計分析：簡單線性迴歸 (報名人數 ~ 總薪資)
+# ------------------------------------------------
+cat("--- 步驟 5：執行迴歸分析 ---\n")
+
+model <- lm(報名人數 ~ 總薪資, data = merged_data)
+summary_model <- summary(model)
+
+# 輸出結果到文字檔
+output_file <- "output/registration_regression_results.txt"
+sink(output_file)
+cat("=== 3-3 報名人數與薪資迴歸分析結果 ===\n\n")
+print(summary_model)
+cat("\n\n解讀：\n")
+cat(paste("R-squared:", round(summary_model$r.squared, 4), "\n"))
+cat(paste("p-value:", format.pval(summary(model)$coefficients[2, 4]), "\n"))
+sink()
+
+cat(paste("統計結果已儲存至", output_file, "\n\n"))
+
+
+# 6. 視覺化：薪資 vs 報名人數散佈圖 (標示抗跌與重災區)
+# ------------------------------------------------
+cat("--- 步驟 6：繪製散佈圖 ---\n")
+
+# 定義要特別標示的群類
+highlight_groups <- c("電機與電子群資電類", "衛生與護理類", "餐旅群", "外語群英語類")
+
+plot_data <- merged_data %>%
   mutate(
-    薪資年增率 = (總薪資 - lag(總薪資)) / lag(總薪資),
-    報名人數年增率 = (報名人數 - lag(報名人數)) / lag(報名人數)
-  ) %>%
-  ungroup() %>%
-  filter(!is.na(薪資年增率) & !is.na(報名人數年增率)) %>%
-  left_join(birth_growth, by = "年度")
-
-cat("--- 步驟 5a：已計算年增率 ---
-")
-# 【關鍵修正】使用 print(n = Inf) 來顯示所有資料列
-print(analysis_data_final, n = Inf)
-cat("\n")
-
-# 儲存修正後的最終分析資料
-output_csv_path <- "data/final_analysis_data_for_3-3.csv"
-write.csv(
-  analysis_data_final,
-  output_csv_path,
-  row.names = FALSE,
-  fileEncoding = "UTF-8"
-)
-cat(paste("--- 步驟 5b：已將包含年增率的分析資料儲存至", output_csv_path, "---
-\n"))
-
-
-# 6. 產生視覺化圖表
-# ------------------------------------------
-cat("--- 步驟 6：產生年增率對比的散佈圖 (象限圖) ---
-")
-
-if (nrow(analysis_data_final) > 0) {
-  # 計算平均值作為象限分割線 (或者使用 0 作為分割線)
-  # 這裡使用 0 作為分割線，因為我們看的是"成長"與"衰退"
-  x_mid <- 0
-  y_mid <- 0
-
-  p_quadrant <- ggplot(analysis_data_final, aes(x = 薪資年增率, y = 報名人數年增率)) +
-    # 加入象限背景色 (可選，這裡用線條區隔保持簡潔)
-    geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
-    geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
-
-    # 繪製點
-    geom_point(aes(color = 群類名稱, shape = as.factor(年度)), size = 4, alpha = 0.8) +
-
-    # 加入趨勢線
-    geom_smooth(method = "lm", se = FALSE, color = "red", linetype = "solid", size = 0.8) +
-
-    # 加入象限標籤
-    annotate("text", x = max(analysis_data_final$薪資年增率, na.rm = TRUE), y = max(analysis_data_final$報名人數年增率, na.rm = TRUE), label = "高薪資成長\n人數正成長", hjust = 1, vjust = 1, color = "gray40", size = 3) +
-    annotate("text", x = max(analysis_data_final$薪資年增率, na.rm = TRUE), y = min(analysis_data_final$報名人數年增率, na.rm = TRUE), label = "高薪資成長\n人數負成長\n(少子化衝擊區)", hjust = 1, vjust = 0, color = "gray40", size = 3) +
-    scale_x_continuous(labels = scales::percent) +
-    scale_y_continuous(labels = scales::percent) +
-    labs(
-      title = "圖三、行業薪資與群類人數變動率散佈圖 (Quadrant Chart)",
-      subtitle = "多數科系落入第四象限（薪資漲、人數跌），顯示少子化推力大於薪資拉力",
-      x = "行業平均總薪資年增率 (%)",
-      y = "統測群類報名人數年增率 (%)",
-      color = "統測群類",
-      shape = "年度",
-      caption = "註：虛線代表零成長界線；紅線為線性迴歸趨勢線"
-    ) +
-    theme_minimal(base_family = "Microsoft JhengHei") +
-    theme(
-      legend.position = "bottom",
-      plot.title = element_text(size = 16, face = "bold")
+    Label = ifelse(群類名稱 %in% highlight_groups, 群類名稱, NA),
+    Category = case_when(
+      群類名稱 %in% c("電機與電子群資電類", "衛生與護理類") ~ "抗跌區 (Resilient)",
+      群類名稱 %in% c("餐旅群", "外語群英語類") ~ "重災區 (Hardest Hit)",
+      TRUE ~ "其他"
     )
+  )
 
-  # 儲存圖表
-  ggsave("output/figures/3_3_quadrant_chart.svg", plot = p_quadrant, width = 10, height = 7)
-  print("已儲存: output/figures/3_3_quadrant_chart.svg")
-} else {
-  cat("--- 步驟 6：錯誤！沒有資料可用於繪圖。---
-")
-}
+p <- ggplot(plot_data, aes(x = 總薪資, y = 報名人數)) +
+  geom_point(aes(color = Category, size = Category), alpha = 0.7) +
+  geom_smooth(method = "lm", se = TRUE, color = "gray", linetype = "dashed", alpha = 0.2) +
+  geom_text(aes(label = 群類名稱), vjust = -0.8, size = 3, check_overlap = TRUE) + # 加入群類名稱標籤
+  scale_color_manual(values = c("抗跌區 (Resilient)" = "#E74C3C", "重災區 (Hardest Hit)" = "#3498DB", "其他" = "#95A5A6")) +
+  scale_size_manual(values = c("抗跌區 (Resilient)" = 4, "重災區 (Hardest Hit)" = 4, "其他" = 2)) +
+  scale_x_continuous(labels = comma) +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "薪資高不一定人多：少子化的遮蔽效應",
+    subtitle = paste0("R² = ", round(summary_model$r.squared, 4), " (相關性極低)"),
+    x = "產業平均年薪 (元)",
+    y = "統測報名人數 (人)"
+  ) +
+  theme_minimal(base_family = "Microsoft JhengHei") +
+  theme(legend.position = "bottom")
 
-cat("\n腳本執行完畢。\n")
+ggsave("output/figures/registration_vs_salary_scatter.png", plot = p, width = 10, height = 8, dpi = 300)
+cat("圖表已輸出至 output/figures/registration_vs_salary_scatter.png\n")
+
+cat("\n腳本 (3-3_analysis.R) 執行完畢。\n")
