@@ -12,6 +12,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(scales)
+library(ggrepel)
 
 # 設定圖表輸出目錄
 dir.create("output/figures", showWarnings = FALSE, recursive = TRUE)
@@ -70,13 +71,21 @@ industry_salary <- salary_data %>%
     filter(行業別 != "工業及服務業總計", between(年度, 109, 113)) %>%
     select(行業別, 年度, 總薪資, `總薪資年增率(%)`)
 
-# 4.2 合併資料
+# 4.2 合併資料並計算成長率
 # 注意：這裡只保留有對應到產業的科系進行分析
 analysis_data <- registration_proportion %>%
     inner_join(mapping_table, by = "群類名稱") %>%
-    inner_join(industry_salary, by = c("行業別", "年度"))
+    inner_join(industry_salary, by = c("行業別", "年度")) %>%
+    arrange(群類名稱, 年度) %>%
+    group_by(群類名稱) %>%
+    mutate(
+        佔比年增率 = (報名佔比 - lag(報名佔比)) / lag(報名佔比),
+        薪資年增率 = (總薪資 - lag(總薪資)) / lag(總薪資)
+    ) %>%
+    ungroup() %>%
+    filter(!is.na(佔比年增率)) # 移除第一年 (109年)
 
-cat("--- 步驟 4：資料合併完成 (僅包含有對應產業之科系) ---\n")
+cat("--- 步驟 4：資料合併與成長率計算完成 ---\n")
 
 # 5. 視覺化分析
 # ------------------------------------
@@ -118,17 +127,29 @@ p1 <- ggplot(plot_data_trend, aes(x = 年度, y = 報名佔比百分比, color =
 ggsave("output/figures/market_share_trends_line.png", p1, width = 10, height = 6, dpi = 300)
 cat("已儲存: output/figures/market_share_trends_line.png\n")
 
-# 5.2 薪資 vs 佔比 散佈圖 - 強調五大產業
+# 5.2 薪資成長率 vs 佔比成長率 散佈圖 (四象限分析)
 plot_data_scatter <- analysis_data %>%
     mutate(
         Highlight = ifelse(群類名稱 %in% key_groups, 群類名稱, "其他"),
-        Alpha = ifelse(群類名稱 %in% key_groups, 0.9, 0.4)
+        Alpha = ifelse(群類名稱 %in% key_groups, 0.9, 0.4),
+        Quadrant = case_when(
+            薪資年增率 > 0 & 佔比年增率 > 0 ~ "Q1: 雙贏 (薪資漲/佔比增)",
+            薪資年增率 <= 0 & 佔比年增率 > 0 ~ "Q2: 高CP值 (薪資平/佔比增)",
+            薪資年增率 <= 0 & 佔比年增率 <= 0 ~ "Q3: 雙輸 (薪資平/佔比減)",
+            薪資年增率 > 0 & 佔比年增率 <= 0 ~ "Q4: 錯失良機 (薪資漲/佔比減)"
+        )
     )
 
-p2 <- ggplot(plot_data_scatter, aes(x = 總薪資, y = 報名佔比百分比)) +
-    geom_point(aes(color = Highlight, alpha = Alpha), size = 4) +
-    geom_smooth(method = "lm", se = TRUE, color = "gray30", linetype = "dashed", alpha = 0.2) +
-    geom_text(aes(label = 年度), vjust = -0.8, size = 3, check_overlap = FALSE) + # 加入年份標籤
+p2 <- ggplot(plot_data_scatter, aes(x = 薪資年增率, y = 佔比年增率)) +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+    geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
+    geom_point(aes(color = Highlight, alpha = Alpha, size = 總薪資)) +
+    geom_smooth(method = "lm", se = FALSE, color = "gray30", linetype = "dotted", alpha = 0.5) +
+    geom_text_repel(
+        aes(label = paste0(群類名稱, "(", 年度, ")")),
+        size = 3,
+        max.overlaps = 20
+    ) +
     scale_color_manual(values = c(
         "電機與電子群資電類" = "#E74C3C", # 紅
         "衛生與護理類" = "#9B59B6", # 紫
@@ -138,50 +159,41 @@ p2 <- ggplot(plot_data_scatter, aes(x = 總薪資, y = 報名佔比百分比)) +
         "其他" = "#BDC3C7" # 灰
     )) +
     scale_alpha_identity() +
-    scale_x_continuous(labels = comma) +
+    scale_x_continuous(labels = percent) +
+    scale_y_continuous(labels = percent) +
     labs(
-        title = "產業平均薪資 vs 科系報名佔比",
-        subtitle = "檢視高薪產業是否吸引更高比例的學生",
-        x = "產業平均總薪資 (元)",
-        y = "科系報名佔比 (%)",
-        color = "群類名稱"
+        title = "薪資成長率 vs 市場佔有率成長率 (動態分析)",
+        subtitle = "檢視「加薪」是否能帶動「市佔率擴張」",
+        x = "薪資年增率 (YoY)",
+        y = "報名佔比年增率 (YoY)",
+        color = "群類名稱",
+        size = "平均月薪"
     ) +
     theme_minimal(base_family = "Microsoft JhengHei") +
     theme(legend.position = "right")
 
-ggsave("output/figures/salary_vs_share_scatter.png", p2, width = 10, height = 6, dpi = 300)
-cat("已儲存: output/figures/salary_vs_share_scatter.png\n")
+ggsave("output/figures/salary_vs_share_growth_scatter.png", p2, width = 10, height = 6, dpi = 300)
+cat("已儲存: output/figures/salary_vs_share_growth_scatter.png\n")
 
 cat("--- 步驟 5：圖表已輸出至 output/figures/ ---\n")
 
 # 6. 統計模型分析
 # ------------------------------------
 
-# 6.1 計算變數的年增率 (針對佔比)
-regression_data <- analysis_data %>%
-    group_by(群類名稱) %>%
-    arrange(年度) %>%
-    mutate(
-        佔比年增率 = (報名佔比 - lag(報名佔比)) / lag(報名佔比),
-        薪資年增率 = (總薪資 - lag(總薪資)) / lag(總薪資)
-    ) %>%
-    ungroup() %>%
-    filter(!is.na(佔比年增率))
-
-# 6.2 模型 A: 靜態模型 (佔比 ~ 薪資)
+# 6.1 模型 A: 靜態模型 (佔比 ~ 薪資) - 仍保留作為對照
 # 檢驗：薪資越高的產業，其對應科系的佔比是否越高？
 model_static <- lm(報名佔比 ~ 總薪資, data = analysis_data)
 
-# 6.3 模型 B: 動態模型 (佔比成長 ~ 薪資成長)
+# 6.2 模型 B: 動態模型 (佔比成長 ~ 薪資成長)
 # 檢驗：薪資漲幅越大的產業，其對應科系的佔比是否成長越快？
-model_dynamic <- lm(佔比年增率 ~ 薪資年增率, data = regression_data)
+model_dynamic <- lm(佔比年增率 ~ 薪資年增率, data = analysis_data)
 
-# 6.4 輸出統計結果
+# 6.3 輸出統計結果
 output_file <- "output/proportion_regression_results.txt"
 sink(output_file)
 
 cat("======================================================\n")
-cat("分析報告：科系報名佔比與薪資之關聯分析\n")
+cat("分析報告：科系報名佔比與薪資之關聯分析 (成長率版)\n")
 cat("======================================================\n\n")
 
 cat("1. 靜態模型 (Model Static)\n")
@@ -199,7 +211,7 @@ print(summary(model_dynamic))
 cat("\n------------------------------------------------------\n\n")
 
 cat("3. 資料摘要 (前 10 筆)\n")
-print(head(regression_data, 10))
+print(head(analysis_data, 10))
 
 sink()
 
