@@ -140,6 +140,48 @@ model_static <- lm(報名佔比 ~ 總薪資, data = analysis_data)
 # 動態模型：使用所有年度成長率資料
 model_dynamic <- lm(佔比年增率 ~ 薪資年增率, data = analysis_data)
 
+# 6.1 靜態模型視覺化：薪資 vs 報名佔比散佈圖（含回歸線與重點群類標註）
+static_scatter_data <- analysis_data %>%
+    group_by(群類名稱) %>%
+    summarise(
+        平均薪資 = mean(總薪資, na.rm = TRUE),
+        平均報名佔比 = mean(報名佔比, na.rm = TRUE)
+    ) %>%
+    ungroup() %>%
+    mutate(Highlight = ifelse(群類名稱 %in% key_groups, 群類名稱, "其他"))
+
+p_static <- ggplot(static_scatter_data, aes(x = 平均薪資, y = 平均報名佔比)) +
+    geom_point(aes(color = Highlight), size = 4, alpha = 0.8) +
+    geom_smooth(method = "lm", se = FALSE, color = "#34495E", linetype = "dashed") +
+    geom_text_repel(
+        data = subset(static_scatter_data, Highlight != "其他"),
+        aes(label = 群類名稱),
+        size = 4,
+        box.padding = 0.5,
+        force = 2
+    ) +
+    scale_color_manual(values = c(
+        "電機與電子群資電類" = "#E74C3C",
+        "衛生與護理類" = "#9B59B6",
+        "機械群" = "#F39C12",
+        "商業與管理群" = "#2ECC71",
+        "餐旅群" = "#3498DB",
+        "其他" = "#BDC3C7"
+    )) +
+    scale_y_continuous(labels = percent_format(accuracy = 0.1)) +
+    labs(
+        title = "薪資 vs 報名佔比（靜態模型）",
+        subtitle = "各群類平均薪資與平均報名佔比關係，含回歸線",
+        x = "平均總薪資（元）",
+        y = "平均報名佔比",
+        color = "群類名稱"
+    ) +
+    theme_minimal(base_family = "Microsoft JhengHei") +
+    theme(legend.position = "right")
+
+ggsave("output/figures/3_3_salary_vs_share_static.png", p_static, width = 9, height = 6, dpi = 300)
+cat("已儲存: output/figures/3_3_salary_vs_share_static.png\n")
+
 output_file <- "output/proportion_regression_results.txt"
 sink(output_file)
 cat("======================================================\n")
