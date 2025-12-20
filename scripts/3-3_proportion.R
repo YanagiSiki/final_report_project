@@ -1,4 +1,4 @@
-# scripts/3-3_part2_proportion.R
+# scripts/3-3_proportion.R
 #
 # 目的：執行 3.3 節分析 - 科系選擇偏好與薪資關聯分析 (Market Share Analysis)
 # -----------------------------------------------------------------------------
@@ -135,18 +135,22 @@ cat("已儲存: output/figures/3_3_salary_vs_share_growth.png\n")
 cat("--- 步驟 5：圖表已輸出至 output/figures/ ---\n")
 
 # 6. 統計模型分析
+# 靜態模型：使用所有年度資料，檢視長期平均關係
 model_static <- lm(報名佔比 ~ 總薪資, data = analysis_data)
+# 動態模型：使用所有年度成長率資料
 model_dynamic <- lm(佔比年增率 ~ 薪資年增率, data = analysis_data)
 
 output_file <- "output/proportion_regression_results.txt"
 sink(output_file)
 cat("======================================================\n")
-cat("分析報告：科系報名佔比與薪資之關聯分析 (成長率版)\n")
+cat("分析報告：科系報名佔比與薪資之關聯分析 (100-113年)\n")
 cat("======================================================\n\n")
 cat("1. 靜態模型 (Model Static)\n")
+cat("說明：檢視「絕對薪資」與「報名佔比」的關係\n")
 print(summary(model_static))
 cat("\n------------------------------------------------------\n\n")
 cat("2. 動態模型 (Model Dynamic)\n")
+cat("說明：檢視「薪資年增率」與「佔比年增率」的關係\n")
 print(summary(model_dynamic))
 cat("\n------------------------------------------------------\n\n")
 cat("3. 資料摘要 (前 10 筆)\n")

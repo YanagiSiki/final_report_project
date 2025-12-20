@@ -114,6 +114,6 @@ p <- ggplot(analysis_data, aes(x = 薪資_3年成長率, y = 占比_3年成長�
     theme_minimal() +
     theme(legend.position = "bottom")
 
-ggsave("output/figures/3year_cycle_scatter.png", p, width = 10, height = 8, bg = "white")
+ggsave("output/figures/3-4_dynamics_3year_cycle.png", p, width = 10, height = 8, bg = "white")
 
-cat("散佈圖已儲存至：output/figures/3year_cycle_scatter.png\n")
+cat("散佈圖已儲存至：output/figures/3-4_dynamics_3year_cycle.png\n")

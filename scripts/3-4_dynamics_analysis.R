@@ -99,40 +99,6 @@ ggsave("output/figures/3-4_dynamics_trajectory.png", p1, width = 10, height = 7)
 cat("圖表 1 已輸出至 output/figures/3-4_dynamics_trajectory.png\n")
 
 # -----------------------------------------------------------------------------
-# 圖表 2：3年週期迴歸圖 (3-Year Cycle Plot)
+# (已移除) 圖表 2：3年週期迴歸圖
+# 請使用 scripts/3-4_3year_cycle_analysis.R 進行該部分分析
 # -----------------------------------------------------------------------------
-
-# 計算 3 年滾動成長率
-cycle_data <- merged_data %>%
-    group_by(群類名稱) %>%
-    arrange(年度) %>%
-    mutate(
-        薪資3年成長率 = (薪資 - lag(薪資, 3)) / lag(薪資, 3),
-        市佔率3年成長率 = (市佔率 - lag(市佔率, 3)) / lag(市佔率, 3)
-    ) %>%
-    filter(!is.na(薪資3年成長率), !is.na(市佔率3年成長率))
-
-# 繪圖
-p2 <- ggplot(cycle_data, aes(x = 薪資3年成長率, y = 市佔率3年成長率)) +
-    geom_hline(yintercept = 0, linetype = "dashed", color = "gray") +
-    geom_vline(xintercept = 0, linetype = "dashed", color = "gray") +
-    geom_point(alpha = 0.5, color = "steelblue") +
-    geom_smooth(method = "lm", color = "darkred", se = TRUE) +
-    # 標示極端值 (可選)
-    geom_text_repel(
-        data = filter(cycle_data, abs(市佔率3年成長率) > 0.2 | abs(薪資3年成長率) > 0.15),
-        aes(label = paste0(群類名稱, "(", 年度, ")")),
-        size = 2.5
-    ) +
-    scale_x_continuous(labels = percent) +
-    scale_y_continuous(labels = percent) +
-    labs(
-        title = "3年週期迴歸分析",
-        subtitle = "薪資成長率 vs 市佔率成長率 (每3年一動)",
-        x = "薪資 3 年成長率",
-        y = "市佔率 3 年成長率"
-    ) +
-    theme_minimal()
-
-ggsave("output/figures/3-4_dynamics_3year_cycle.png", p2, width = 8, height = 6)
-cat("圖表 2 已輸出至 output/figures/3-4_dynamics_3year_cycle.png\n")
