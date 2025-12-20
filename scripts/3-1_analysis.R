@@ -21,7 +21,7 @@ output_path <- "output/figures/"
 if (!dir.exists(output_path)) dir.create(output_path, recursive = TRUE)
 
 # 讀取本分析所需的唯一資料
-birth_cohort_data <- read_csv(file.path(data_path, "tcte_birth_cohort_statistics_109_113.csv"), show_col_types = FALSE)
+birth_cohort_data <- read_csv(file.path(data_path, "tcte_birth_cohort_statistics_100_113.csv"), show_col_types = FALSE)
 
 cat("---", "步驟 2：資料載入成功 ---", "\n\n")
 
@@ -49,34 +49,29 @@ cat(paste("p 值 (p-value):", format.pval(p_value, digits = 3, eps = 0.001), "\n
 cat("-----------------------------------------------------", "\n\n")
 cat("結論：正如報告 3.1.2 節所述，兩者存在高度顯著的正相關。\n")
 
-# 4. 視覺化：出生人數 vs 報名人數趨勢
-# ---------------------------------
-cat("---", "步驟 4：繪製趨勢圖 ---", "\n")
-
-# 為了繪圖，將資料轉換為長格式 (Long Format)
-plot_data <- birth_cohort_data %>%
-  select(統測學年度, 該年出生人數, 統測報名人數) %>%
-  rename(學年度 = 統測學年度) %>%
-  tidyr::pivot_longer(
-    cols = c("該年出生人數", "統測報名人數"),
-    names_to = "類別",
-    values_to = "人數"
-  )
-
-p <- ggplot(plot_data, aes(x = 學年度, y = 人數, color = 類別, group = 類別)) +
-  geom_line(linewidth = 1.2) +
-  geom_point(size = 3) +
-  scale_y_continuous(labels = comma) +
+# 4. 視覺化：出生人數 vs 報名人數趨勢 (3_1_birth_reg_trend.svg)
+# --------------------------------------------------------------
+cat("--- 步驟 4：生成 3_1_birth_reg_trend.svg ---\n")
+birth_reg_plot <- ggplot(birth_cohort_data, aes(x = 統測學年度)) +
+  geom_line(aes(y = 該年出生人數, color = "該年出生人數"), linewidth = 1.2) +
+  geom_line(aes(y = 統測報名人數, color = "統測報名人數"), linewidth = 1.2) +
+  geom_point(aes(y = 該年出生人數), size = 2.5) +
+  geom_point(aes(y = 統測報名人數), size = 2.5) +
+  scale_y_continuous(name = "人數", labels = scales::comma) +
+  scale_color_manual(name = "指標", values = c("該年出生人數" = "#D55E00", "統測報名人數" = "#0072B2")) +
   labs(
-    title = "少子化衝擊：出生人數與統測報名人數之連動趨勢",
-    subtitle = paste0("皮爾森相關係數 r = ", round(correlation_r, 2)),
+    title = "歷年出生人口與統測總報名人數趨勢",
     x = "學年度",
-    y = "人數"
+    y = "人數",
+    caption = "資料來源：內政部戶政司、技專校院入學測驗中心"
   ) +
-  theme_minimal(base_family = "Microsoft JhengHei") +
-  theme(legend.position = "bottom")
+  theme_minimal(base_family = "sans")
 
-ggsave(file.path(output_path, "birth_vs_registration_trend.png"), plot = p, width = 8, height = 6, dpi = 300)
-cat("圖表已輸出至 output/figures/birth_vs_registration_trend.png\n")
+ggsave(
+  filename = file.path(output_path, "3_1_birth_reg_trend.svg"),
+  plot = birth_reg_plot,
+  width = 8, height = 5
+)
+cat("--- 3_1_birth_reg_trend.svg 已儲存 ---\n\n")
 
 cat("\n腳本 (3-1_analysis.R) 執行完畢。\n")

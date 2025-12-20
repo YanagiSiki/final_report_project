@@ -7,16 +7,18 @@ lm(formula = 報名人數成長率 ~ 薪資成長率, data = merged_data)
 
 Residuals:
       Min        1Q    Median        3Q       Max 
--0.113930 -0.024190 -0.004982  0.033267  0.133026 
+-0.140510 -0.035979  0.000145  0.040996  0.218914 
 
 Coefficients:
-            Estimate Std. Error t value Pr(>|t|)
-(Intercept) -0.06180    0.03985  -1.551    0.131
-薪資成長率  -0.40636    1.21352  -0.335    0.740
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) -0.06432    0.01237  -5.201 1.16e-06 ***
+薪資成長率   0.53420    0.55315   0.966    0.337    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.05476 on 30 degrees of freedom
-Multiple R-squared:  0.003724,	Adjusted R-squared:  -0.02949 
-F-statistic: 0.1121 on 1 and 30 DF,  p-value: 0.7401
+Residual standard error: 0.06247 on 94 degrees of freedom
+Multiple R-squared:  0.009824,	Adjusted R-squared:  -0.0007094 
+F-statistic: 0.9327 on 1 and 94 DF,  p-value: 0.3367
 
 
 --- 模型 2: 抗跌性檢定 (報名人數成長率 ~ 絕對薪資) ---
@@ -26,17 +28,17 @@ lm(formula = 報名人數成長率 ~ 總薪資, data = merged_data)
 
 Residuals:
       Min        1Q    Median        3Q       Max 
--0.114864 -0.031919 -0.000627  0.034381  0.134102 
+-0.153171 -0.036410  0.004265  0.040653  0.213412 
 
 Coefficients:
-              Estimate Std. Error t value Pr(>|t|)   
-(Intercept) -1.001e-01  3.191e-02  -3.137  0.00381 **
-總薪資       3.767e-07  4.522e-07   0.833  0.41142   
+              Estimate Std. Error t value Pr(>|t|)  
+(Intercept)  8.454e-03  2.517e-02   0.336    0.738  
+總薪資      -1.413e-06  5.514e-07  -2.563    0.012 *
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.05424 on 30 degrees of freedom
-Multiple R-squared:  0.02261,	Adjusted R-squared:  -0.009972 
-F-statistic: 0.6939 on 1 and 30 DF,  p-value: 0.4114
+Residual standard error: 0.0607 on 94 degrees of freedom
+Multiple R-squared:  0.06534,	Adjusted R-squared:  0.05539 
+F-statistic: 6.571 on 1 and 94 DF,  p-value: 0.01195
 
 

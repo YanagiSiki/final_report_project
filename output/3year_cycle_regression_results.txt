@@ -1,0 +1,20 @@
+=== 3年週期迴歸分析結果 (100-113年) ===
+模型：科系報名占比3年成長率 ~ 行業總薪資3年成長率
+
+
+Call:
+lm(formula = 占比_3年成長率 ~ 薪資_3年成長率, data = analysis_data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.25762 -0.08211  0.01619  0.08650  0.33050 
+
+Coefficients:
+               Estimate Std. Error t value Pr(>|t|)
+(Intercept)     0.02470    0.03789   0.652    0.516
+薪資_3年成長率  0.08992    0.60611   0.148    0.882
+
+Residual standard error: 0.1223 on 78 degrees of freedom
+Multiple R-squared:  0.0002821,	Adjusted R-squared:  -0.01253 
+F-statistic: 0.02201 on 1 and 78 DF,  p-value: 0.8824
+

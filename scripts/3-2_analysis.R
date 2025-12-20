@@ -13,7 +13,7 @@ library(ggplot2)
 cat("--- 步驟 1：套件載入成功 (3-2_analysis.R) ---\n\n")
 
 # 2. 讀取資料
-file_path <- "data/salary_data_109_113.csv"
+file_path <- "data/salary_data_100_113.csv"
 salary_data <- read_csv(file_path, show_col_types = FALSE)
 
 cat("--- 步驟 2：資料載入成功 ---\n\n")
@@ -22,8 +22,8 @@ cat("--- 步驟 2：資料載入成功 ---\n\n")
 # 3. 準備 ANOVA 資料
 # ------------------------------------
 salary_for_analysis <- salary_data %>%
-  filter(行業別 != "工業及服務業總計", !is.na(總薪資)) %>%
-  select(行業別, 總薪資) %>%
+  filter(類別 == "經常性薪資", 業別 != "工業及服務業總計", !is.na(值)) %>%
+  select(行業別 = 業別, 總薪資 = 值) %>%
   mutate(行業別 = as.factor(行業別))
 
 cat("--- 步驟 3：已準備好用於 ANOVA 分析的資料 ---\n\n")
@@ -33,15 +33,16 @@ cat("--- 步驟 3：已準備好用於 ANOVA 分析的資料 ---\n\n")
 
 # 計算每個行業 5 年來的平均薪資，用於排序
 industry_order <- salary_data %>%
-  filter(行業別 != "工業及服務業總計", !is.na(總薪資)) %>%
-  group_by(行業別) %>%
-  summarise(mean_salary = mean(總薪資, na.rm = TRUE)) %>%
+  filter(類別 == "經常性薪資", 業別 != "工業及服務業總計", !is.na(值)) %>%
+  group_by(業別) %>%
+  summarise(mean_salary = mean(值, na.rm = TRUE)) %>%
   arrange(mean_salary) %>%
-  pull(行業別)
+  pull(業別)
 
 # 轉換為 factor 以控制繪圖順序
 salary_for_plot <- salary_data %>%
-  filter(行業別 != "工業及服務業總計", !is.na(總薪資))
+  filter(類別 == "經常性薪資", 業別 != "工業及服務業總計", !is.na(值)) %>%
+  rename(行業別 = 業別, 總薪資 = 值)
 salary_for_plot$行業別 <- factor(salary_for_plot$行業別, levels = industry_order)
 
 # 設定顏色：預設灰色，金融與餐飲特別標色
@@ -59,7 +60,7 @@ p_boxplot <- ggplot(salary_for_plot, aes(x = 行業別, y = 總薪資, fill = hi
   coord_flip() + # 轉置座標軸，讓長行業名稱好讀
   labs(
     title = "產業薪資M型化：金融業 vs 餐飲業",
-    subtitle = "各行業 109-113 年平均總薪資分佈 (ANOVA 檢定差異顯著)",
+    subtitle = "各行業 100-113 年平均總薪資分佈 (ANOVA 檢定差異顯著)",
     x = "行業別",
     y = "平均總薪資 (元)",
     caption = "資料來源：行政院主計總處"

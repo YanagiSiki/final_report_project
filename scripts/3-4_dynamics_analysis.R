@@ -1,0 +1,138 @@
+# scripts/3-4_dynamics_analysis.R
+#
+# 目標：3.4 薪資的磁吸效應：市佔率流動
+# 產出：
+# 1. 產業軌跡圖 (Trajectory Plot)
+# 2. 3年週期迴歸圖 (3-Year Cycle Plot)
+# -----------------------------------------------------------------------------
+
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(scales)
+library(ggrepel)
+
+dir.create("output/figures", showWarnings = FALSE, recursive = TRUE)
+
+# 1. 載入資料
+salary_data <- read_csv("data/salary_data_100_113.csv", show_col_types = FALSE)
+registration_data <- read_csv("data/tcte_registration_100_114.csv", show_col_types = FALSE)
+
+# 2. 資料處理
+# 2.1 薪資資料
+industry_salary <- salary_data %>%
+    filter(類別 == "經常性薪資", 業別 != "工業及服務業總計", between(年度, 100, 113)) %>%
+    select(行業別 = 業別, 年度, 薪資 = 值)
+
+# 2.2 報名佔比資料
+registration_share <- registration_data %>%
+    pivot_longer(cols = matches("^\\d{3}學年度$"), names_to = "學年度_str", values_to = "報名人數") %>%
+    mutate(年度 = as.numeric(gsub("學年度", "", 學年度_str))) %>%
+    filter(!is.na(報名人數), 群類代號 != "All", between(年度, 100, 113)) %>%
+    group_by(年度) %>%
+    mutate(總報名人數 = sum(報名人數), 市佔率 = 報名人數 / 總報名人數) %>%
+    ungroup() %>%
+    select(群類名稱, 年度, 市佔率)
+
+# 2.3 對應表
+mapping_table <- tribble(
+    ~行業別, ~群類名稱,
+    "住宿及餐飲業", "餐旅群",
+    "出版影音及資通訊業", "電機與電子群資電類",
+    "金融及保險業", "商業與管理群",
+    "製造業", "機械群",
+    "製造業", "動力機械群",
+    "營建工程業", "土木與建築群",
+    "醫療保健及社會工作服務業", "衛生與護理類",
+    "教育業", "外語群英語類",
+    "教育業", "外語群日語類",
+    "專業科學及技術服務業", "設計群",
+    "農林漁牧業", "農業群",
+    "製造業", "食品群",
+    "其他服務業", "家政群生活應用類",
+    "醫療保健及社會工作服務業", "家政群幼保類",
+    "運輸及倉儲業", "海事群",
+    "製造業", "化工群",
+    "藝術娛樂及休閒服務業", "藝術群影視類"
+)
+
+# 2.4 合併資料
+merged_data <- mapping_table %>%
+    left_join(industry_salary, by = "行業別") %>%
+    left_join(registration_share, by = c("群類名稱", "年度")) %>%
+    filter(!is.na(薪資), !is.na(市佔率))
+
+# -----------------------------------------------------------------------------
+# 圖表 1：產業軌跡圖 (Trajectory Plot)
+# -----------------------------------------------------------------------------
+
+# 篩選起點 (100年) 與終點 (113年)
+trajectory_data <- merged_data %>%
+    filter(年度 %in% c(100, 113)) %>%
+    arrange(群類名稱, 年度)
+
+# 繪圖
+p1 <- ggplot(trajectory_data, aes(x = 薪資, y = 市佔率, group = 群類名稱, color = 群類名稱)) +
+    geom_path(arrow = arrow(length = unit(0.3, "cm"), type = "closed"), size = 1, alpha = 0.7) +
+    geom_point(size = 2) +
+    geom_text_repel(
+        data = subset(trajectory_data, 年度 == 113),
+        aes(label = 群類名稱),
+        size = 3,
+        nudge_x = 1000,
+        box.padding = 0.5
+    ) +
+    scale_x_continuous(labels = comma) +
+    scale_y_continuous(labels = percent) +
+    labs(
+        title = "產業軌跡圖 (100年 -> 113年)",
+        subtitle = "箭頭顯示從 100 年到 113 年的移動方向：右上方代表「薪資漲、市佔漲」",
+        x = "經常性薪資 (元)",
+        y = "報名人數市佔率 (%)",
+        caption = "資料來源：教育部統計處、勞動部"
+    ) +
+    theme_minimal() +
+    theme(legend.position = "none")
+
+ggsave("output/figures/3-4_dynamics_trajectory.png", p1, width = 10, height = 7)
+cat("圖表 1 已輸出至 output/figures/3-4_dynamics_trajectory.png\n")
+
+# -----------------------------------------------------------------------------
+# 圖表 2：3年週期迴歸圖 (3-Year Cycle Plot)
+# -----------------------------------------------------------------------------
+
+# 計算 3 年滾動成長率
+cycle_data <- merged_data %>%
+    group_by(群類名稱) %>%
+    arrange(年度) %>%
+    mutate(
+        薪資3年成長率 = (薪資 - lag(薪資, 3)) / lag(薪資, 3),
+        市佔率3年成長率 = (市佔率 - lag(市佔率, 3)) / lag(市佔率, 3)
+    ) %>%
+    filter(!is.na(薪資3年成長率), !is.na(市佔率3年成長率))
+
+# 繪圖
+p2 <- ggplot(cycle_data, aes(x = 薪資3年成長率, y = 市佔率3年成長率)) +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "gray") +
+    geom_vline(xintercept = 0, linetype = "dashed", color = "gray") +
+    geom_point(alpha = 0.5, color = "steelblue") +
+    geom_smooth(method = "lm", color = "darkred", se = TRUE) +
+    # 標示極端值 (可選)
+    geom_text_repel(
+        data = filter(cycle_data, abs(市佔率3年成長率) > 0.2 | abs(薪資3年成長率) > 0.15),
+        aes(label = paste0(群類名稱, "(", 年度, ")")),
+        size = 2.5
+    ) +
+    scale_x_continuous(labels = percent) +
+    scale_y_continuous(labels = percent) +
+    labs(
+        title = "3年週期迴歸分析",
+        subtitle = "薪資成長率 vs 市佔率成長率 (每3年一動)",
+        x = "薪資 3 年成長率",
+        y = "市佔率 3 年成長率"
+    ) +
+    theme_minimal()
+
+ggsave("output/figures/3-4_dynamics_3year_cycle.png", p2, width = 8, height = 6)
+cat("圖表 2 已輸出至 output/figures/3-4_dynamics_3year_cycle.png\n")

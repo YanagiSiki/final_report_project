@@ -15,9 +15,7 @@ library(svglite)
 library(gghighlight)
 library(scales)
 
-cat("--- 步驟 1：套件載入成功 (2_descriptive_analysis.R) ---
-
-")
+cat("--- 步驟 1：套件載入成功 (2_descriptive_analysis.R) ---\n\n")
 
 # 2. 資料與路徑設定
 # ---------------------------
@@ -25,23 +23,21 @@ data_path <- "data/"
 image_output_path <- "output/figures/"
 
 # 讀取所需資料
-birth_cohort_data <- read_csv(file.path(data_path, "tcte_birth_cohort_statistics_109_113.csv"), show_col_types = FALSE)
-registration_data <- read_csv(file.path(data_path, "tcte_registration_109_114.csv"), show_col_types = FALSE)
-salary_data <- read_csv(file.path(data_path, "salary_data_109_113.csv"), show_col_types = FALSE)
+birth_cohort_data <- read_csv(file.path(data_path, "tcte_birth_cohort_statistics_100_113.csv"), show_col_types = FALSE)
+registration_data <- read_csv(file.path(data_path, "tcte_registration_100_114.csv"), show_col_types = FALSE)
+salary_data <- read_csv(file.path(data_path, "salary_data_100_113.csv"), show_col_types = FALSE)
 
-cat("--- 步驟 2：資料載入成功 ---
-
-")
+cat("--- 步驟 2：資料載入成功 ---\n\n")
 
 
 # --- 3. 生成所有描述性圖表 ---
 
-#圖表 2.1: 歷年產業薪資趨勢
+# 圖表 2.1: 歷年產業薪資趨勢
 # -----------------------------------------------
-cat("--- 步驟 3a：生成 2_1_salary_trends.svg ---
-")
+cat("--- 步驟 3a：生成 2_1_salary_trends.svg ---\n")
 salary_for_plot <- salary_data %>%
-  filter(行業別 != "工業及服務業總計", between(年度, 109, 113))
+  filter(類別 == "經常性薪資", 業別 != "工業及服務業總計", between(年度, 100, 113)) %>%
+  rename(行業別 = 業別, 總薪資 = 值)
 
 highlighted_industries <- c("金融及保險業", "住宿及餐飲業")
 
@@ -50,9 +46,9 @@ line_chart <- ggplot(salary_for_plot, aes(x = 年度, y = 總薪資, color = 行
   geom_point(size = 2.5) +
   gghighlight(行業別 %in% highlighted_industries, label_params = list(nudge_x = 0.5, segment.color = NA), use_direct_label = TRUE) +
   scale_y_continuous(labels = scales::comma) +
-  scale_x_continuous(breaks = 109:113) +
+  scale_x_continuous(breaks = 100:113) +
   labs(
-    title = "109-113年 各主要行業別平均總薪資趨勢",
+    title = "100-113年 各主要行業別平均總薪資趨勢",
     subtitle = "圖中突顯薪資最高與最低的行業別",
     x = "年度",
     y = "總薪資 (元)",
@@ -66,19 +62,16 @@ line_chart <- ggplot(salary_for_plot, aes(x = 年度, y = 總薪資, color = 行
   )
 
 ggsave(
-  filename = file.path(image_output_path, "2_1_salary_trends.svg"), # 新檔名
+  filename = file.path(image_output_path, "2_1_salary_trends.svg"),
   plot = line_chart,
   width = 10, height = 7
 )
-cat("--- 2_1_salary_trends.svg 已儲存 ---
-
-")
+cat("--- 2_1_salary_trends.svg 已儲存 ---\n\n")
 
 
 # 圖表 2.2: 各科系群類報名人數趨勢
 # ----------------------------------------------
-cat("--- 步驟 3b：生成 2_2_registration_trends_by_group.svg ---
-")
+cat("--- 步驟 3b：生成 2_2_registration_trends_by_group.svg ---\n")
 registration_long <- registration_data %>%
   pivot_longer(
     cols = ends_with("學年度"),
@@ -94,10 +87,10 @@ registration_trend_plot <- ggplot(registration_long, aes(x = 學年度, y = 報�
   geom_line(linewidth = 1.2) +
   geom_point(size = 2.5) +
   scale_y_continuous(labels = scales::comma) +
-  scale_x_continuous(breaks = 109:114) +
+  scale_x_continuous(breaks = 100:114) +
   gghighlight(群類名稱 %in% highlight_groups, label_params = list(nudge_x = 1.5, segment.color = NA, max.overlaps = 15), use_direct_label = TRUE) +
   labs(
-    title = "各科系群類報名人數趨勢變化 (109-114年)",
+    title = "各科系群類報名人數趨勢變化 (100-114年)",
     subtitle = "圖中突顯餐旅、商管、資電、衛生護理類",
     x = "學年度",
     y = "報名人數",
@@ -107,19 +100,16 @@ registration_trend_plot <- ggplot(registration_long, aes(x = 學年度, y = 報�
   theme(legend.position = "none")
 
 ggsave(
-  filename = file.path(image_output_path, "2_2_registration_trends_by_group.svg"), # 新檔名
+  filename = file.path(image_output_path, "2_2_registration_trends_by_group.svg"),
   plot = registration_trend_plot,
   width = 10, height = 7
 )
-cat("--- 2_2_registration_trends_by_group.svg 已儲存 ---
-
-")
+cat("--- 2_2_registration_trends_by_group.svg 已儲存 ---\n\n")
 
 
 # 圖表 2.3: 薪資年增率熱力圖
 # ------------------------------------------
-cat("--- 步驟 3c：生成 2_3_salary_growth_heatmap.svg ---
-")
+cat("--- 步驟 3c：生成 2_3_salary_growth_heatmap.svg ---\n")
 salary_growth_data <- salary_data %>%
   filter(行業別 != "工業及服務業總計") %>%
   group_by(行業別) %>%
@@ -138,7 +128,7 @@ salary_heatmap_plot <- ggplot(salary_growth_data, aes(x = as.factor(年度), y =
     labels = scales::percent
   ) +
   labs(
-    title = "各行業薪資年增率熱力圖 (110-113年)",
+    title = "各行業薪資年增率熱力圖 (101-113年)",
     subtitle = "藍色為正增長，紅色為負增長",
     x = "年度",
     y = "行業別",
@@ -149,42 +139,11 @@ salary_heatmap_plot <- ggplot(salary_growth_data, aes(x = as.factor(年度), y =
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ggsave(
-  filename = file.path(image_output_path, "2_3_salary_growth_heatmap.svg"), # 新檔名
+  filename = file.path(image_output_path, "2_3_salary_growth_heatmap.svg"),
   plot = salary_heatmap_plot,
   width = 10, height = 8
 )
-cat("--- 2_3_salary_growth_heatmap.svg 已儲存 ---
-
-")
-
-
-# 圖表 3.1: 出生人口與統測總報名人數趨勢 (對應 3-1 節分析)
-# --------------------------------------------------------------
-cat("--- 步驟 3d：生成 3_1_birth_reg_trend.svg ---
-")
-birth_reg_plot <- ggplot(birth_cohort_data, aes(x = 統測學年度)) +
-  geom_line(aes(y = 該年出生人數, color = "該年出生人數"), linewidth = 1.2) +
-  geom_line(aes(y = 統測報名人數, color = "統測報名人數"), linewidth = 1.2) +
-  geom_point(aes(y = 該年出生人數), size = 2.5) +
-  geom_point(aes(y = 統測報名人數), size = 2.5) +
-  scale_y_continuous(name = "人數", labels = scales::comma) +
-  scale_color_manual(name = "指標", values = c("該年出生人數" = "#D55E00", "統測報名人數" = "#0072B2")) +
-  labs(
-    title = "歷年出生人口與統測總報名人數趨勢",
-    x = "學年度",
-    y = "人數",
-    caption = "資料來源：內政部戶政司、技專校院入學測驗中心"
-  ) +
-  theme_minimal(base_family = "sans")
-
-ggsave(
-  filename = file.path(image_output_path, "3_1_birth_reg_trend.svg"), # 新檔名
-  plot = birth_reg_plot,
-  width = 8, height = 5
-)
-cat("--- 3_1_birth_reg_trend.svg 已儲存 ---
-
-")
+cat("--- 2_3_salary_growth_heatmap.svg 已儲存 ---\n\n")
 
 
 cat("\n描述性統計圖表腳本 (2_descriptive_analysis.R) 執行完畢。\n")
