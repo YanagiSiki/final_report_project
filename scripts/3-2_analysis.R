@@ -96,4 +96,17 @@ cat(paste("F 統計量 (F-statistic):", round(f_statistic, 2), "\n"))
 cat(paste("p 值 (p-value):", format.pval(p_value, digits = 3, eps = 0.001), "\n"))
 cat("-----------------------------------------------------\n\n")
 
+
+
+# 5. 執行 Tukey HSD 事後檢定，聚焦金融及保險業 vs 住宿及餐飲業
+cat("--- 步驟 5：執行 Tukey HSD 事後檢定 ---\n")
+aov_result <- aov(總薪資 ~ 行業別, data = salary_for_analysis)
+tukey_result <- TukeyHSD(aov_result)
+cat("\nTukey HSD 全部 pairwise 結果：\n")
+print(tukey_result)
+
+# 只顯示金融及保險業 vs 住宿及餐飲業的比較
+cat("\n--- 金融及保險業 vs 住宿及餐飲業 Tukey HSD 結果 ---\n")
+print(tukey_result$`行業別`["金融及保險業-住宿及餐飲業", ])
+
 cat("\n腳本 (3-2_analysis.R) 執行完畢。\n")
