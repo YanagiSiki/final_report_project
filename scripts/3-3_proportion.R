@@ -135,12 +135,8 @@ cat("已儲存: output/figures/3_3_salary_vs_share_growth.png\n")
 cat("--- 步驟 5：圖表已輸出至 output/figures/ ---\n")
 
 # 6. 統計模型分析
-# 靜態模型：使用所有年度資料，檢視長期平均關係
-model_static <- lm(報名佔比 ~ 總薪資, data = analysis_data)
-# 動態模型：使用所有年度成長率資料
-model_dynamic <- lm(佔比年增率 ~ 薪資年增率, data = analysis_data)
 
-# 6.1 靜態模型視覺化：薪資 vs 報名佔比散佈圖（含回歸線與重點群類標註）
+# 6.1 準備靜態模型資料：計算各群類長期平均值
 static_scatter_data <- analysis_data %>%
     group_by(群類名稱) %>%
     summarise(
@@ -150,6 +146,19 @@ static_scatter_data <- analysis_data %>%
     ungroup() %>%
     mutate(Highlight = ifelse(群類名稱 %in% key_groups, 群類名稱, "其他"))
 
+# 6.2 建立模型
+# 靜態模型 A：全體群類 (使用長期平均值)
+model_static_mean <- lm(平均報名佔比 ~ 平均薪資, data = static_scatter_data)
+
+# 靜態模型 B：排除「餐旅群」 (檢驗理性經濟導向)
+model_static_rational <- lm(平均報名佔比 ~ 平均薪資,
+    data = subset(static_scatter_data, 群類名稱 != "餐旅群")
+)
+
+# 動態模型：使用所有年度成長率資料 (維持不變)
+model_dynamic <- lm(佔比年增率 ~ 薪資年增率, data = analysis_data)
+
+# 6.3 靜態模型視覺化：薪資 vs 報名佔比散佈圖
 p_static <- ggplot(static_scatter_data, aes(x = 平均薪資, y = 平均報名佔比)) +
     geom_point(aes(color = Highlight), size = 4, alpha = 0.8) +
     geom_smooth(method = "lm", se = FALSE, color = "#34495E", linetype = "dashed") +
@@ -187,11 +196,17 @@ sink(output_file)
 cat("======================================================\n")
 cat("分析報告：科系報名佔比與薪資之關聯分析 (100-113年)\n")
 cat("======================================================\n\n")
-cat("1. 靜態模型 (Model Static)\n")
-cat("說明：檢視「絕對薪資」與「報名佔比」的關係\n")
-print(summary(model_static))
+
+cat("1. 靜態模型 (Static Model - Cross-sectional)\n")
+cat("說明：使用各群類「長期平均薪資」解釋「長期平均報名佔比」\n")
+cat("------------------------------------------------------\n")
+cat("(A) 全體群類模型：\n")
+print(summary(model_static_mean))
+cat("\n(B) 排除「餐旅群」模型 (理性經濟群)：\n")
+print(summary(model_static_rational))
 cat("\n------------------------------------------------------\n\n")
-cat("2. 動態模型 (Model Dynamic)\n")
+
+cat("2. 動態模型 (Dynamic Model - Time Series)\n")
 cat("說明：檢視「薪資年增率」與「佔比年增率」的關係\n")
 print(summary(model_dynamic))
 cat("\n------------------------------------------------------\n\n")
