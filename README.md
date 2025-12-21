@@ -8,6 +8,8 @@
 - `data/`: 存放原始數據集 (CSV 檔案)。
 - `output/`: 存放所有由腳本自動產生的結果。
   - `figures/`: 存放所有視覺化圖表。
+  - `final_report_integrated.md`: 整合後的期末報告全文（Markdown 格式，彙整所有章節內容，便於檢閱與提交）。
+  - `statistical_methods.md`: 統計方法與模型說明（詳細記錄本專案所用的統計分析方法、模型設定及其應用說明）。
 - `scripts/`: 存放所有執行的 R 分析腳本。
 - `prompt_master_outline.md`: 定義報告大綱及各章節分析方向的提示文件。
 - `README.md`: 專案說明文件（本文件）。
