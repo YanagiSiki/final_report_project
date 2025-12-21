@@ -110,8 +110,7 @@ cat("--- 2_2_registration_trends_by_group.svg 已儲存 ---\n\n")
 # 圖表 2.3: 薪資年增率熱力圖
 # ------------------------------------------
 cat("--- 步驟 3c：生成 2_3_salary_growth_heatmap.svg ---\n")
-salary_growth_data <- salary_data %>%
-  filter(行業別 != "工業及服務業總計") %>%
+salary_growth_data <- salary_for_plot %>%
   group_by(行業別) %>%
   arrange(年度) %>%
   mutate(

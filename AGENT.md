@@ -103,9 +103,10 @@ _所有分析皆依此對應表，不可更動。_
 
 ## 6. AI 執行規則
 
-1.  **優先閱讀**：執行任務前，務必先檢查 `AGENT.md`，理解變數對應與專案情境。
+1.  **優先閱讀**：執行任務前，務必先檢查 `AGENT.md`，理解變數對應與專案情境。一律優先使用中文回答。
 2.  **資料正確性**：不得憑空產生數據，僅能使用提供的 CSV 或 R script 輸出。
 3.  **一致性與同步**：
 
 - `chapters/` 內容、`final_report_integrated.md`（章節整合檔）、`statistical_methods.md`（方法學習文件）須與 `output/` 統計結果相符，並保持邏輯與敘述一致。
 - `statistical_methods.md` 需**定期檢查並同步**，確保涵蓋所有分析中實際用到的統計方法。
+- **圖片連結檢查**：在整合 `final_report_integrated.md` 時，務必檢查所有圖片連結（`figures/`）是否正確指向 `output/figures/` 中的實際檔案，避免連結失效。
