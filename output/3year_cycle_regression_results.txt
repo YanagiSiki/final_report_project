@@ -1,22 +1,22 @@
-=== 3年週期迴歸分析結果 (100-113年) ===
-模型：科系報名占比3年成長率 ~ 行業總薪資3年成長率
+=== 3年期平均資料回歸分析結果 (100-113年) ===
+模型：科系市佔率3年平均 ~ 行業總薪資3年平均
 
 
 Call:
-lm(formula = 占比_3年成長率 ~ 薪資_3年成長率, data = analysis_data)
+lm(formula = 平均市佔率 ~ 平均薪資, data = analysis_3y)
 
 Residuals:
      Min       1Q   Median       3Q      Max 
--0.32312 -0.09912 -0.00957  0.06727  0.66513 
+-0.06545 -0.04811 -0.02834  0.01818  0.16160 
 
 Coefficients:
-               Estimate Std. Error t value Pr(>|t|)   
-(Intercept)     0.10748    0.03793   2.833  0.00561 **
-薪資_3年成長率 -0.54331    0.62455  -0.870  0.38649   
+              Estimate Std. Error t value Pr(>|t|)  
+(Intercept) -7.479e-03  4.311e-02  -0.173   0.8631  
+平均薪資     1.921e-06  9.546e-07   2.013   0.0504 .
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.1781 on 97 degrees of freedom
-Multiple R-squared:  0.007741,	Adjusted R-squared:  -0.002488 
-F-statistic: 0.7568 on 1 and 97 DF,  p-value: 0.3865
+Residual standard error: 0.06967 on 43 degrees of freedom
+Multiple R-squared:  0.0861,	Adjusted R-squared:  0.06485 
+F-statistic: 4.051 on 1 and 43 DF,  p-value: 0.05043
 

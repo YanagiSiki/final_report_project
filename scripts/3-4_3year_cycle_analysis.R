@@ -55,60 +55,75 @@ mapping_table_final <- tribble(
     "製造業", "化工群",
 )
 
-# 5. 合併資料並計算「3年1動」成長率
-# 定義：3年成長率 = (Value_t - Value_{t-3}) / Value_{t-3}
 
-analysis_data <- registration_annual %>%
-    inner_join(mapping_table_final, by = "群類名稱", relationship = "many-to-many") %>%
-    inner_join(industry_salary_annual, by = c("行業別", "年度")) %>%
-    arrange(群類名稱, 行業別, 年度) %>%
-    group_by(群類名稱, 行業別) %>%
-    mutate(
-        薪資_3年成長率 = (總薪資 - lag(總薪資, 3)) / lag(總薪資, 3),
-        占比_3年成長率 = (報名占比 - lag(報名占比, 3)) / lag(報名占比, 3)
-    ) %>%
-    ungroup() %>%
-    filter(!is.na(薪資_3年成長率), !is.na(占比_3年成長率))
+# 5. 依每3年分組計算平均市佔率與平均薪資
+periods <- list(
+    `100-102` = 100:102,
+    `103-105` = 103:105,
+    `106-108` = 106:108,
+    `109-111` = 109:111,
+    `112-113` = 112:113
+)
 
-cat("--- 步驟 5：已計算 3 年週期成長率 ---\n")
-print(head(analysis_data))
+get_period <- function(year) {
+    for (p in names(periods)) {
+        if (year %in% periods[[p]]) {
+            return(p)
+        }
+    }
+    return(NA)
+}
 
-# 6. 執行迴歸分析
-# 模型：占比_3年成長率 ~ 薪資_3年成長率
-model_3y <- lm(占比_3年成長率 ~ 薪資_3年成長率, data = analysis_data)
-summary_3y <- summary(model_3y)
+registration_annual$period <- sapply(registration_annual$年度, get_period)
+industry_salary_annual$period <- sapply(industry_salary_annual$年度, get_period)
+
+# 計算每群類每3年期的平均市佔率
+reg_3y <- registration_annual %>%
+    filter(!is.na(period)) %>%
+    group_by(群類名稱, period) %>%
+    summarise(平均市佔率 = mean(報名占比, na.rm = TRUE), .groups = "drop")
+
+# 計算每行業每3年期的平均薪資
+sal_3y <- industry_salary_annual %>%
+    filter(!is.na(period)) %>%
+    group_by(行業別, period) %>%
+    summarise(平均薪資 = mean(總薪資, na.rm = TRUE), .groups = "drop")
+
+# 合併對應表
+analysis_3y <- reg_3y %>%
+    inner_join(mapping_table_final, by = "群類名稱") %>%
+    inner_join(sal_3y, by = c("行業別", "period"))
+
+cat("--- 步驟 5：已計算每3年平均市佔率與平均薪資 ---\n")
+print(head(analysis_3y))
+
+# 6. 執行回歸分析（市佔率 ~ 薪資）
+model_3y_avg <- lm(平均市佔率 ~ 平均薪資, data = analysis_3y)
+summary_3y_avg <- summary(model_3y_avg)
 
 # 輸出迴歸結果
 output_file <- "output/3year_cycle_regression_results.txt"
 sink(output_file)
-cat("=== 3年週期迴歸分析結果 (100-113年) ===\n")
-cat("模型：科系報名占比3年成長率 ~ 行業總薪資3年成長率\n\n")
-print(summary_3y)
+cat("=== 3年期平均資料回歸分析結果 (100-113年) ===\n")
+cat("模型：科系市佔率3年平均 ~ 行業總薪資3年平均\n\n")
+print(summary_3y_avg)
 sink()
 
-cat(paste0("\n迴歸分析結果已儲存至：", output_file, "\n"))
+cat(paste0("\n回歸分析結果已儲存至：", output_file, "\n"))
 
-# 7. 繪製散佈圖
-p <- ggplot(analysis_data, aes(x = 薪資_3年成長率, y = 占比_3年成長率)) +
-    geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
-    geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
-    geom_point(aes(color = 群類名稱), size = 3, alpha = 0.7) +
+# 7. 繪製散點圖
+library(ggrepel)
+p <- ggplot(analysis_3y, aes(x = 平均薪資, y = 平均市佔率, color = 群類名稱)) +
+    geom_point(size = 3, alpha = 0.8) +
     geom_smooth(method = "lm", se = TRUE, color = "black", linetype = "solid") +
-    geom_text_repel(
-        data = subset(analysis_data, 年度 == 113 | abs(占比_3年成長率) > 0.15 | abs(薪資_3年成長率) > 0.15),
-        aes(label = paste0(群類名稱, "(", 年度, ")")),
-        size = 3,
-        max.overlaps = 50,
-        box.padding = 0.5,
-        force = 2
-    ) +
-    scale_x_continuous(labels = percent) +
-    scale_y_continuous(labels = percent) +
+    geom_text_repel(aes(label = paste0(群類名稱, "\n", period)), size = 3, max.overlaps = 50) +
+    scale_x_continuous(labels = comma) +
+    scale_y_continuous(labels = percent_format(accuracy = 0.1)) +
     labs(
-        title = "3年週期分析：薪資成長 vs 科系占比成長 (100-113年)",
-        subtitle = "每點代表該年度與3年前相比的成長率",
-        x = "行業總薪資 3年成長率",
-        y = "科系報名占比 3年成長率",
+        title = "3年期平均：薪資 vs 科系市佔率 (100-113年)",
+        subtitle = "每點代表該群類於每3年期的平均值",
+        x = "行業總薪資（3年平均, 元）",
+        y = "科系市佔率（3年平均）",
         caption = "資料來源：教育部、主計總處"
     ) +
     theme_minimal() +
@@ -116,4 +131,4 @@ p <- ggplot(analysis_data, aes(x = 薪資_3年成長率, y = 占比_3年成長�
 
 ggsave("output/figures/3-4_dynamics_3year_cycle.png", p, width = 10, height = 8, bg = "white")
 
-cat("散佈圖已儲存至：output/figures/3-4_dynamics_3year_cycle.png\n")
+cat("散點圖已儲存至：output/figures/3-4_dynamics_3year_cycle.png\n")
