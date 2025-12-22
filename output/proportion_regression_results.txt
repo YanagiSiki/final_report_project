@@ -12,16 +12,16 @@ lm(formula = 平均報名佔比 ~ 平均薪資, data = static_scatter_data)
 
 Residuals:
      Min       1Q   Median       3Q      Max 
--0.06200 -0.05586 -0.02658  0.03145  0.12254 
+-0.06279 -0.04620 -0.02501  0.01846  0.13548 
 
 Coefficients:
-             Estimate Std. Error t value Pr(>|t|)
-(Intercept) 1.239e-02  1.205e-01   0.103    0.921
-平均薪資    1.620e-06  2.611e-06   0.621    0.558
+              Estimate Std. Error t value Pr(>|t|)
+(Intercept) -1.501e-02  1.091e-01  -0.138    0.894
+平均薪資     2.093e-06  2.422e-06   0.864    0.416
 
-Residual standard error: 0.07816 on 6 degrees of freedom
-Multiple R-squared:  0.06033,	Adjusted R-squared:  -0.09628 
-F-statistic: 0.3852 on 1 and 6 DF,  p-value: 0.5576
+Residual standard error: 0.07529 on 7 degrees of freedom
+Multiple R-squared:  0.09642,	Adjusted R-squared:  -0.03267 
+F-statistic: 0.7469 on 1 and 7 DF,  p-value: 0.4161
 
 
 (B) 排除「餐旅群」模型 (理性經濟群)：
@@ -31,19 +31,19 @@ lm(formula = 平均報名佔比 ~ 平均薪資, data = subset(static_scatter_dat
     群類名稱 != "餐旅群"))
 
 Residuals:
-        1         2         3         4         5         6         7 
- 0.008756 -0.017246  0.069889 -0.014706  0.052230 -0.062542 -0.036382 
+      Min        1Q    Median        3Q       Max 
+-0.064418 -0.020968 -0.008405  0.021044  0.069623 
 
 Coefficients:
               Estimate Std. Error t value Pr(>|t|)  
-(Intercept) -1.471e-01  9.658e-02  -1.523   0.1883  
-平均薪資     4.644e-06  2.014e-06   2.306   0.0693 .
+(Intercept) -1.513e-01  8.032e-02  -1.883   0.1087  
+平均薪資     4.715e-06  1.726e-06   2.733   0.0341 *
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.05184 on 5 degrees of freedom
-Multiple R-squared:  0.5153,	Adjusted R-squared:  0.4184 
-F-statistic: 5.316 on 1 and 5 DF,  p-value: 0.06929
+Residual standard error: 0.04786 on 6 degrees of freedom
+Multiple R-squared:  0.5545,	Adjusted R-squared:  0.4802 
+F-statistic: 7.467 on 1 and 6 DF,  p-value: 0.03407
 
 
 ------------------------------------------------------
@@ -55,17 +55,19 @@ Call:
 lm(formula = 佔比年增率 ~ 薪資年增率, data = analysis_data)
 
 Residuals:
-     Min       1Q   Median       3Q      Max 
--0.11516 -0.03749  0.00233  0.02760  0.17836 
+      Min        1Q    Median        3Q       Max 
+-0.119628 -0.037138 -0.002497  0.034855  0.268466 
 
 Coefficients:
-            Estimate Std. Error t value Pr(>|t|)
-(Intercept) 0.004592   0.011238   0.409    0.684
-薪資年增率  0.248225   0.502647   0.494    0.623
+            Estimate Std. Error t value Pr(>|t|)   
+(Intercept)  0.03037    0.01024   2.967  0.00366 **
+薪資年增率  -0.49268    0.44413  -1.109  0.26960   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.05677 on 94 degrees of freedom
-Multiple R-squared:  0.002588,	Adjusted R-squared:  -0.008023 
-F-statistic: 0.2439 on 1 and 94 DF,  p-value: 0.6226
+Residual standard error: 0.06865 on 115 degrees of freedom
+Multiple R-squared:  0.01059,	Adjusted R-squared:  0.001984 
+F-statistic: 1.231 on 1 and 115 DF,  p-value: 0.2696
 
 
 ------------------------------------------------------

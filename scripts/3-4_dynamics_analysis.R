@@ -1,12 +1,3 @@
-# 2.5 年增率（Growth Rate）計算（依 AGENT.md 3.2）
-# $\text{Growth Rate} = \frac{V_t - V_{t-1}}{V_{t-1}}$
-# 這裡以市佔率為例，計算每群類每年度市佔率年增率
-growth_data <- merged_data %>%
-    group_by(群類名稱) %>%
-    arrange(年度) %>%
-    mutate(市佔率年增率 = (市佔率 - lag(市佔率)) / lag(市佔率)) %>%
-    ungroup()
-
 # scripts/3-4_dynamics_analysis.R
 #
 # 本腳本依據 AGENT.md 專案規格執行，所有變數對應、指標定義、分析流程、圖表標題與註解皆嚴格遵循 AGENT.md。
@@ -57,9 +48,9 @@ mapping_table <- tribble(
     "製造業", "機械群",
     "製造業", "動力機械群",
     "營建工程業", "土木與建築群",
-    "醫療保健及社會工作服務業", "衛生與護理類",
-    "藝術娛樂及休閒服務業", "藝術群影視類",
-    "製造業", "化工群"
+    "醫療保健業", "衛生與護理類",
+    "藝術﹑娛樂及休閒服務業", "藝術群影視類",
+    "製造業", "化工群",
 )
 
 # 2.4 合併資料
@@ -68,6 +59,15 @@ merged_data <- mapping_table %>%
     left_join(industry_salary, by = "行業別") %>%
     left_join(registration_share, by = c("群類名稱", "年度")) %>%
     filter(!is.na(薪資), !is.na(市佔率))
+
+# 2.5 年增率（Growth Rate）計算（依 AGENT.md 3.2）
+# $\text{Growth Rate} = \frac{V_t - V_{t-1}}{V_{t-1}}$
+# 這裡以市佔率為例，計算每群類每年度市佔率年增率
+growth_data <- merged_data %>%
+    group_by(群類名稱) %>%
+    arrange(年度) %>%
+    mutate(市佔率年增率 = (市佔率 - lag(市佔率)) / lag(市佔率)) %>%
+    ungroup()
 
 # -----------------------------------------------------------------------------
 # 圖表 1：產業軌跡圖（依 AGENT.md 4.3 Pull Factor 驗證）

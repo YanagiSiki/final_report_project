@@ -7,14 +7,16 @@ lm(formula = 占比_3年成長率 ~ 薪資_3年成長率, data = analysis_data)
 
 Residuals:
      Min       1Q   Median       3Q      Max 
--0.25762 -0.08211  0.01619  0.08650  0.33050 
+-0.32312 -0.09912 -0.00957  0.06727  0.66513 
 
 Coefficients:
-               Estimate Std. Error t value Pr(>|t|)
-(Intercept)     0.02470    0.03789   0.652    0.516
-薪資_3年成長率  0.08992    0.60611   0.148    0.882
+               Estimate Std. Error t value Pr(>|t|)   
+(Intercept)     0.10748    0.03793   2.833  0.00561 **
+薪資_3年成長率 -0.54331    0.62455  -0.870  0.38649   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.1223 on 78 degrees of freedom
-Multiple R-squared:  0.0002821,	Adjusted R-squared:  -0.01253 
-F-statistic: 0.02201 on 1 and 78 DF,  p-value: 0.8824
+Residual standard error: 0.1781 on 97 degrees of freedom
+Multiple R-squared:  0.007741,	Adjusted R-squared:  -0.002488 
+F-statistic: 0.7568 on 1 and 97 DF,  p-value: 0.3865
 
